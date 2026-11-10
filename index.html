@@ -1,0 +1,2085 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bol Saathi</title>
+  <meta name="description"
+    content="A voice tutor that teaches the everyday words of a new city. Learn Bengali, Hindi or English by speaking, in your own language.">
+  <meta property="og:title" content="Bol Saathi">
+  <meta property="og:description"
+    content="New city? Learn its words by speaking. A voice tutor for Hindi, Bengali and English.">
+  <meta name="theme-color" content="#1D3F72">
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='8' width='56' height='36' rx='4' fill='%23FFCF1A' stroke='%23000' stroke-width='4'/%3E%3Crect x='14' y='44' width='6' height='16' fill='%23000'/%3E%3Crect x='44' y='44' width='6' height='16' fill='%23000'/%3E%3Cpath d='M17 26h30' stroke='%23000' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Anek+Latin:wdth,wght@87.5..100,400..800&display=swap"
+    onerror="this.onerror=null;this.href='https://fonts.googleapis.com/css2?family=Anek+Latin:wght@400..800&display=swap'">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@87.5..100,400..800&display=swap"
+    onerror="this.onerror=null;this.href='https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@400..800&display=swap'">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wdth,wght@87.5..100,400..800&display=swap"
+    onerror="this.onerror=null;this.href='https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400..800&display=swap'">
+  <style>
+    :root {
+      --yellow: #FFCF1A;
+      --ink: #000;
+      --coach: #1D3F72;
+      --platform: #E6E9EE;
+      --paper: #FFFFFF;
+      --line: #C2C9D3;
+      --slate: #3E4856;
+      --green: #12884A;
+      --amber: #F2A007;
+      --red: #C62828;
+      --font: "Anek Latin", "Anek Devanagari", "Anek Bangla", "Nirmala UI", "Noto Sans", "Kohinoor Devanagari", "Kohinoor Bangla", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%
+    }
+
+    body {
+      margin: 0;
+      background: var(--platform);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 18px;
+      line-height: 1.5
+    }
+
+    button {
+      font: inherit;
+      color: inherit
+    }
+
+    a {
+      color: var(--coach);
+      font-weight: 600
+    }
+
+    p {
+      margin: 0
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--coach);
+      outline-offset: 3px
+    }
+
+    [hidden] {
+      display: none !important
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding-left: 16px;
+      padding-right: 16px
+    }
+
+    /* header: a small trilingual station sign */
+    .top {
+      background: var(--coach);
+      color: #fff
+    }
+
+    .top .wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 12px;
+      padding-bottom: 12px
+    }
+
+    .mark {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--yellow);
+      color: #000;
+      border: 2px solid #000;
+      border-radius: 4px;
+      padding: 3px 12px 4px;
+      line-height: 1.14;
+      box-shadow: inset 0 0 0 2px var(--yellow), inset 0 0 0 3.5px #000
+    }
+
+    .mark span {
+      font-weight: 800;
+      font-stretch: 87.5%;
+      font-size: 15px
+    }
+
+    .mark .lat {
+      font-size: 14px
+    }
+
+    .pill {
+      font-size: 15px;
+      font-weight: 600;
+      border: 1.5px solid rgba(255, 255, 255, .6);
+      padding: 5px 12px;
+      border-radius: 999px;
+      white-space: nowrap
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 700;
+      margin: 16px 0 12px
+    }
+
+    h2 {
+      font-size: 21px;
+      line-height: 1.25;
+      font-weight: 700;
+      margin: 0
+    }
+
+    /* language picker: from my language to the new city's language */
+    .ticket {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: grid;
+      gap: 8px
+    }
+
+    .pick {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: end;
+      gap: 8px
+    }
+
+    .fld {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0
+    }
+
+    .fld span {
+      font-size: 15px;
+      color: var(--slate);
+      font-weight: 600
+    }
+
+    .fld select {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%;
+      min-height: 48px;
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 6px 34px 6px 12px;
+      font: inherit;
+      font-size: 19px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center/16px
+    }
+
+    .fld select:disabled {
+      opacity: .55;
+      cursor: not-allowed
+    }
+
+    #to {
+      background-color: var(--yellow)
+    }
+
+    .pick .arrow {
+      display: grid;
+      place-items: center;
+      height: 48px
+    }
+
+    .pick .arrow svg {
+      width: 26px;
+      height: 26px
+    }
+
+    .hint {
+      font-size: 15px;
+      color: var(--slate);
+      line-height: 1.4
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px
+    }
+
+    .tab {
+      flex: 1 1 0;
+      min-width: 0;
+      border: 2px solid var(--coach);
+      background: #fff;
+      color: var(--coach);
+      border-radius: 10px;
+      padding: 7px 6px;
+      font-weight: 700;
+      font-size: 17px;
+      line-height: 1.2;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      min-height: 58px;
+      text-align: center
+    }
+
+    .tab small {
+      font-weight: 500;
+      font-size: 14px
+    }
+
+    .tab[aria-selected="true"] {
+      background: var(--coach);
+      color: #fff
+    }
+
+    .tab:disabled {
+      cursor: not-allowed
+    }
+
+    .tab[aria-selected="false"]:disabled {
+      opacity: .5
+    }
+
+    .notice {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--amber);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 15px;
+      margin-top: 12px
+    }
+
+    /* the station board */
+    .stage {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      scroll-margin-top: 12px
+    }
+
+    .bmeta {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px
+    }
+
+    .bmeta .pos {
+      font-size: 15px;
+      color: var(--slate);
+      font-weight: 600
+    }
+
+    .nav {
+      display: flex;
+      gap: 8px
+    }
+
+    .ibtn {
+      width: 44px;
+      height: 44px;
+      flex: none;
+      border-radius: 50%;
+      border: 2px solid #000;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      padding: 0
+    }
+
+    .ibtn svg {
+      width: 20px;
+      height: 20px
+    }
+
+    .ibtn:disabled {
+      opacity: .35;
+      cursor: not-allowed
+    }
+
+    .board {
+      width: 100%;
+      max-width: 560px;
+      background: var(--yellow);
+      border: 3px solid #000;
+      border-radius: 6px;
+      padding: 20px 16px 18px;
+      text-align: center;
+      box-shadow: inset 0 0 0 5px var(--yellow), inset 0 0 0 7px #000
+    }
+
+    .board .w {
+      font-size: clamp(48px, 14vw, 88px);
+      font-weight: 800;
+      font-stretch: 87.5%;
+      line-height: 1.08;
+      overflow-wrap: anywhere
+    }
+
+    .board.len-m .w {
+      font-size: clamp(40px, 10.5vw, 66px)
+    }
+
+    .board.len-l .w {
+      font-size: clamp(30px, 7.8vw, 50px)
+    }
+
+    .board .p {
+      font-size: 22px;
+      font-weight: 600;
+      margin-top: 8px
+    }
+
+    .board .m {
+      font-size: 21px;
+      font-weight: 500;
+      margin-top: 2px
+    }
+
+    .board .p:empty,
+    .board .m:empty {
+      display: none
+    }
+
+    .cap::first-letter {
+      text-transform: uppercase
+    }
+
+    .posts {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 17%
+    }
+
+    .posts i {
+      display: block;
+      width: 10px;
+      height: 26px;
+      background: #000
+    }
+
+    .listen {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      justify-content: center;
+      flex-wrap: wrap
+    }
+
+    .board.arrive {
+      animation: arrive .3s ease-out
+    }
+
+    @keyframes arrive {
+      from {
+        transform: translateX(32px);
+        opacity: 0
+      }
+
+      to {
+        transform: none;
+        opacity: 1
+      }
+    }
+
+    /* the route: one station per word */
+    .route {
+      margin-top: 18px
+    }
+
+    .route ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      position: relative
+    }
+
+    .route ol::before {
+      content: "";
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 15px;
+      height: 4px;
+      background: #000
+    }
+
+    .route li {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative
+    }
+
+    .stn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 3px solid #000;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      padding: 0;
+      color: #000
+    }
+
+    .stn svg {
+      width: 16px;
+      height: 16px
+    }
+
+    .stn.got {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff
+    }
+
+    .stn.prac {
+      background: var(--amber)
+    }
+
+    .stn.cur {
+      box-shadow: 0 0 0 4px var(--platform), 0 0 0 7px #000
+    }
+
+    .stn.cur:not(.got):not(.prac) {
+      background: var(--yellow)
+    }
+
+    .stn:disabled {
+      cursor: default
+    }
+
+    .route .lbl {
+      font-size: 14px;
+      margin-top: 9px;
+      max-width: 100%;
+      padding: 0 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .route.hide .lbl {
+      visibility: hidden
+    }
+
+    /* panels */
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px 16px;
+      margin-top: 20px
+    }
+
+    .panel .sub {
+      font-size: 16px;
+      color: var(--slate);
+      margin-top: 4px
+    }
+
+    .ex .exrow {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: space-between
+    }
+
+    .ex .lbl {
+      font-size: 15px;
+      color: var(--slate);
+      font-weight: 600
+    }
+
+    .ex .s {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 4px;
+      line-height: 1.35
+    }
+
+    .ex .pr {
+      font-size: 16px;
+      color: var(--slate);
+      margin-top: 2px
+    }
+
+    .ex .mn {
+      font-size: 17px;
+      margin-top: 6px
+    }
+
+    .tip {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      font-size: 17px
+    }
+
+    .tip .sign {
+      flex: none;
+      width: 18px;
+      height: 13px;
+      margin-top: 6px;
+      background: var(--yellow);
+      border: 2px solid #000;
+      border-radius: 2px
+    }
+
+    .tip b {
+      display: block;
+      font-size: 15px;
+      color: var(--slate)
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px
+    }
+
+    .btn {
+      appearance: none;
+      border: 2px solid var(--coach);
+      background: #fff;
+      color: var(--coach);
+      border-radius: 999px;
+      padding: 7px 16px;
+      min-height: 48px;
+      font-size: 17px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      line-height: 1.2
+    }
+
+    .btn svg {
+      width: 20px;
+      height: 20px;
+      flex: none
+    }
+
+    .btn.primary {
+      background: var(--coach);
+      color: #fff
+    }
+
+    .btn.big {
+      min-height: 58px;
+      font-size: 19px;
+      padding: 10px 24px
+    }
+
+    .btn.ok {
+      border-color: var(--green);
+      background: var(--green);
+      color: #fff
+    }
+
+    .btn:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    .qcount {
+      font-size: 15px;
+      color: var(--slate);
+      margin-top: 10px
+    }
+
+    .qtext {
+      font-size: 21px;
+      font-weight: 700;
+      margin-top: 2px
+    }
+
+    .opts {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px
+    }
+
+    .opt {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      border: 2px solid #000;
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 14px;
+      min-height: 62px;
+      cursor: pointer
+    }
+
+    .opt .ow {
+      font-size: 23px;
+      font-weight: 800;
+      font-stretch: 87.5%;
+      line-height: 1.25
+    }
+
+    .opt .op {
+      font-size: 15px;
+      color: var(--slate)
+    }
+
+    .opt.right {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff
+    }
+
+    .opt.right .op {
+      color: #fff
+    }
+
+    .opt.wrong {
+      background: #FBE9E9;
+      border-color: var(--red)
+    }
+
+    .opt:disabled {
+      cursor: default
+    }
+
+    .fb {
+      font-size: 17px;
+      font-weight: 700;
+      margin-top: 10px;
+      min-height: 1.5em
+    }
+
+    .fb.good {
+      color: var(--green)
+    }
+
+    .fb.bad {
+      color: var(--red)
+    }
+
+    .score {
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 10px
+    }
+
+    details.about {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 20px
+    }
+
+    details.about summary {
+      font-weight: 700;
+      font-size: 18px;
+      cursor: pointer
+    }
+
+    details.about p {
+      font-size: 16px;
+      margin-top: 10px;
+      max-width: 66ch
+    }
+
+    footer {
+      font-size: 14px;
+      color: var(--slate);
+      padding-top: 18px;
+      padding-bottom: 24px
+    }
+
+    /* the lesson dock: the platform edge */
+    .dock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      background: #fff;
+      border-top: 6px solid var(--yellow);
+      box-shadow: 0 -3px 0 #000;
+      padding-bottom: env(safe-area-inset-bottom, 0px)
+    }
+
+    .dock .wrap {
+      padding-top: 10px;
+      padding-bottom: 12px
+    }
+
+    .dstatus {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      color: var(--slate);
+      font-weight: 600
+    }
+
+    .sig {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--line);
+      flex: none
+    }
+
+    .sig.speaking {
+      background: var(--coach)
+    }
+
+    .sig.listening {
+      background: var(--red);
+      animation: pulse 1.3s infinite
+    }
+
+    .sig.tap {
+      background: var(--amber)
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(198, 40, 40, .5)
+      }
+
+      80%,
+      100% {
+        box-shadow: 0 0 0 12px rgba(198, 40, 40, 0)
+      }
+    }
+
+    .caption {
+      font-size: 20px;
+      line-height: 1.4;
+      margin-top: 4px;
+      max-height: 5.7em;
+      overflow: auto
+    }
+
+    .caption .tw {
+      font-weight: 700;
+      background: linear-gradient(transparent 58%, rgba(255, 207, 26, .9) 0);
+      padding: 0 2px
+    }
+
+    .caption .hintline {
+      font-size: 16px;
+      color: var(--slate)
+    }
+
+    .heard {
+      font-size: 16px;
+      color: var(--slate);
+      margin-top: 2px
+    }
+
+    .heard:empty {
+      display: none
+    }
+
+    .heard.interim {
+      font-style: italic
+    }
+
+    .dock .actions {
+      margin-top: 10px;
+      gap: 8px
+    }
+
+    .dock .btn {
+      font-size: 16px;
+      padding: 7px 13px
+    }
+
+    .dock .btn.big {
+      width: 100%;
+      justify-content: center;
+      font-size: 19px
+    }
+
+    .dock .stopb {
+      margin-left: auto;
+      width: 48px;
+      height: 48px;
+      border-color: var(--coach);
+      color: var(--coach)
+    }
+
+    .dock .stopb svg {
+      width: 18px;
+      height: 18px
+    }
+
+    body.running .listen {
+      display: none
+    }
+
+    @media (min-width:640px) {
+      h1 {
+        font-size: 30px
+      }
+
+      .opts {
+        grid-template-columns: repeat(3, 1fr)
+      }
+
+      .dock .btn.big {
+        width: auto
+      }
+    }
+
+    @media (max-width:440px) {
+      .tab {
+        font-size: 16px
+      }
+
+      .fld select {
+        font-size: 18px
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      .board.arrive {
+        animation: none
+      }
+
+      .sig.listening {
+        animation: none
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="mark" role="img" aria-label="Bol Saathi">
+        <span lang="hi">बोल साथी</span><span lang="bn">বোল সাথী</span><span class="lat">Bol Saathi</span>
+      </div>
+      <div class="pill" id="pill"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1 id="tagline"></h1>
+
+    <section class="ticket">
+      <div class="pick">
+        <label class="fld"><span id="k-from"></span><select id="from"></select></label>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.6"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12h17" />
+            <path d="M14 6l6 6-6 6" />
+          </svg></span>
+        <label class="fld"><span id="k-to"></span><select id="to"></select></label>
+      </div>
+      <p class="hint" id="hint"></p>
+    </section>
+
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div id="notices" aria-live="polite"></div>
+
+    <section class="stage" id="stage">
+      <div class="bmeta">
+        <span class="pos" id="pos"></span>
+        <span class="nav"><button class="ibtn" id="prev" type="button"></button><button class="ibtn" id="next"
+            type="button"></button></span>
+      </div>
+      <div class="board" id="board">
+        <p class="w" id="bw"></p>
+        <p class="p" id="bp"></p>
+        <p class="m" id="bm"></p>
+      </div>
+      <div class="posts" aria-hidden="true"><i></i><i></i></div>
+      <div class="listen"><button class="btn" id="hear" type="button"></button><button class="btn" id="hear-slow"
+          type="button"></button></div>
+    </section>
+
+    <nav class="route" id="routeNav">
+      <ol id="route"></ol>
+    </nav>
+
+    <section class="panel ex" id="ex"></section>
+    <section class="panel quiz" id="quiz"></section>
+
+    <details class="about">
+      <summary>About this prototype</summary>
+      <p><strong>The task.</strong> Build a working voice agent that helps people learn vocabulary. This one was made
+        for the Apna Advantage Program.</p>
+      <p><strong>Who it’s for.</strong> People who move to another state for a job. A warehouse worker from Bihar
+        starting in Kolkata, or a delivery partner from Bengal starting in Delhi, needs a handful of words in week one:
+        directions, rent, salary and “please speak slowly”.</p>
+      <p><strong>How it works.</strong> Pick your language and the language of your new city. Bol Saathi teaches five
+        words per topic in your language, asks you to say each one, checks what it hears, and gives a hint and a second
+        try when needed. It ends with a quick check based on real situations, starting with the words you found hard.
+        Each word appears in its own script, with the pronunciation written in yours.</p>
+      <p><strong>Why voice.</strong> The goal is to be understood out loud, and many first-time workers are more
+        comfortable speaking than reading.</p>
+      <p><strong>How it’s built.</strong> Made with Claude as a single web page. It uses the browser’s own speech
+        recognition and voices, so there’s no app, sign-up or paid service. It works best in Chrome or Edge with a
+        microphone.</p>
+      <p><strong>What I’d measure.</strong> Words recalled correctly the next day, lessons finished, and how often
+        learners ask to hear a word slowly.</p>
+      <p><strong>What’s next.</strong> Word packs for specific jobs (delivery, retail, hospitality), short daily lessons
+        that bring back missed words, more languages starting with Odia, and a WhatsApp voice version.</p>
+      <p><strong>Try it.</strong> <a href="?from=hi&amp;to=bn&amp;topic=road">As a Hindi speaker moving to Kolkata</a>,
+        or <a href="?from=bn&amp;to=hi&amp;topic=road">as a Bengali speaker moving to Delhi</a>.</p>
+    </details>
+  </main>
+
+  <footer class="wrap" id="foot"></footer>
+
+  <div class="dock" id="dock" role="region" aria-label="Speaking lesson">
+    <div class="wrap">
+      <div class="dstatus" id="dstatus" hidden><span class="sig" id="sig"></span><span id="status"></span></div>
+      <p class="caption" id="caption" aria-live="polite"></p>
+      <p class="heard" id="heard" aria-live="polite"></p>
+      <div class="actions" id="tactions"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /*DATA_START*/
+      const DATA = {
+        langs: ['hi', 'bn', 'en'],
+        bcp: {hi: 'hi-IN', bn: 'bn-IN', en: 'en-IN'},
+        native: {hi: 'हिन्दी', bn: 'বাংলা', en: 'English'},
+        names: {
+          en: {hi: 'Hindi', bn: 'Bengali', en: 'English'},
+          hi: {hi: 'हिन्दी', bn: 'बांग्ला', en: 'अंग्रेज़ी'},
+          bn: {hi: 'হিন্দি', bn: 'বাংলা', en: 'ইংরেজি'}
+        },
+        loc: {
+          en: {hi: 'in Hindi', bn: 'in Bengali', en: 'in English'},
+          hi: {hi: 'हिन्दी में', bn: 'बांग्ला में', en: 'अंग्रेज़ी में'},
+          bn: {hi: 'হিন্দিতে', bn: 'বাংলায়', en: 'ইংরেজিতে'}
+        },
+        topics: [
+          {
+            id: 'road', name: {en: 'On the road', hi: 'रास्ते में', bn: 'রাস্তায়'},
+            frag: {en: 'getting around', hi: 'रास्ते के लिए', bn: 'রাস্তায় চলার জন্য'}
+          },
+          {
+            id: 'home', name: {en: 'Home & market', hi: 'घर और बाज़ार', bn: 'ঘর আর বাজার'},
+            frag: {en: 'home and the market', hi: 'घर और बाज़ार के लिए', bn: 'ঘর আর বাজারের জন্য'}
+          },
+          {
+            id: 'work', name: {en: 'At work', hi: 'काम पर', bn: 'কাজের জায়গায়'},
+            frag: {en: 'work', hi: 'काम की जगह के लिए', bn: 'কাজের জায়গার জন্য'}
+          }
+        ],
+        words: [
+          {
+            id: 'left', topic: 'road',
+            en: {w: 'left', ex: 'Go left from the shop.', resp: {hi: 'लेफ़्ट', bn: 'লেফট'}, acc: ['left', 'turn left', 'go left', 'left side']},
+            hi: {
+              w: 'बाएँ', r: 'baayen', resp: {bn: 'বায়েঁ'}, ex: 'दुकान से बाएँ जाइए।', exr: 'dukaan se baayen jaaiye', exresp: {bn: 'দুকান সে বায়েঁ জাইয়ে।'},
+              acc: ['बाएँ', 'बाएं', 'बायें', 'बाईं', 'बाएँ तरफ़', 'बाईं तरफ़', 'बाएं तरफ', 'लेफ्ट']
+            },
+            bn: {
+              w: 'বাঁদিকে', r: 'baan dike', resp: {hi: 'बाँदिके'}, ex: 'দোকান থেকে বাঁদিকে যান।', exr: 'dokan theke baan dike jaan', exresp: {hi: 'दोकान थेके बाँदिके जान।'},
+              acc: ['বাঁদিকে', 'বাঁ দিকে', 'বা দিকে', 'বাম দিকে', 'বামদিকে', 'বাঁয়ে', 'লেফট']
+            },
+            ask: {en: 'You need to turn left. What do you tell the driver?', hi: 'आपको बाएँ मुड़ना है। ड्राइवर से क्या कहेंगे?', bn: 'আপনাকে বাঁদিকে যেতে হবে। ড্রাইভারকে কী বলবেন?'}
+          },
+
+          {
+            id: 'right', topic: 'road',
+            en: {w: 'right', ex: 'The office is on the right.', resp: {hi: 'राइट', bn: 'রাইট'}, acc: ['right', 'turn right', 'right side']},
+            hi: {
+              w: 'दाएँ', r: 'daayen', resp: {bn: 'দায়েঁ'}, ex: 'ऑफ़िस दाएँ तरफ़ है।', exr: 'office daayen taraf hai', exresp: {bn: 'অফিস দায়েঁ তরফ হ্যায়।'},
+              acc: ['दाएँ', 'दाएं', 'दायें', 'दाईं', 'दाएँ तरफ़', 'दाईं तरफ़', 'दाएं तरफ', 'राइट']
+            },
+            bn: {
+              w: 'ডানদিকে', r: 'daan dike', resp: {hi: 'डानदिके'}, ex: 'অফিসটা ডানদিকে।', exr: 'offish-ta daan dike', exresp: {hi: 'ऑफ़िशटा डानदिके।'},
+              acc: ['ডানদিকে', 'ডান দিকে', 'ডানে', 'রাইট']
+            },
+            ask: {en: 'Your office is on the right. Which word do you use?', hi: 'आपका ऑफ़िस दाएँ तरफ़ है। कौन-सा शब्द बोलेंगे?', bn: 'আপনার অফিস ডানদিকে। কোন শব্দটা বলবেন?'}
+          },
+
+          {
+            id: 'straight', topic: 'road',
+            en: {w: 'straight ahead', ex: 'Go straight for two minutes.', resp: {hi: 'स्ट्रेट अहेड', bn: 'স্ট্রেট আহেড'}, acc: ['straight ahead', 'straight', 'go straight']},
+            hi: {
+              w: 'सीधा', r: 'seedha', resp: {bn: 'সীধা'}, ex: 'दो मिनट सीधा जाइए।', exr: 'do minat seedha jaaiye', exresp: {bn: 'দো মিনট সীধা জাইয়ে।'},
+              acc: ['सीधा', 'सीधे', 'सीधा जाइए', 'सीधे जाइए', 'सीधा चलिए', 'स्ट्रेट']
+            },
+            bn: {
+              w: 'সোজা', r: 'shoja', resp: {hi: 'शोजा'}, ex: "দু'মিনিট সোজা যান।", exr: 'du minit shoja jaan', exresp: {hi: 'दु मिनिट शोजा जान।'},
+              acc: ['সোজা', 'সোজা যান', 'সোজা চলুন']
+            },
+            ask: {en: 'The driver should keep going straight. What do you say?', hi: 'ड्राइवर को सीधा चलते रहना है। आप क्या कहेंगे?', bn: 'ড্রাইভারকে সোজা যেতে হবে। আপনি কী বলবেন?'}
+          },
+
+          {
+            id: 'stop', topic: 'road',
+            en: {w: 'stop here', ex: 'Stop here, please.', resp: {hi: 'स्टॉप हियर', bn: 'স্টপ হিয়ার'}, acc: ['stop here', 'stop', 'please stop here', 'stop here please']},
+            hi: {
+              w: 'यहाँ रोकिए', r: 'yahaan rokiye', resp: {bn: 'ইয়াহাঁ রোকিয়ে'}, ex: 'भैया, यहाँ रोकिए।', exr: 'bhaiya, yahaan rokiye', exresp: {bn: 'ভাইয়া, ইয়াহাঁ রোকিয়ে।'},
+              acc: ['यहाँ रोकिए', 'यहां रोकिए', 'यहीं रोकिए', 'यहाँ रोको', 'यहां रोको', 'यहीं रोक दीजिए', 'रोकिए', 'रोको', 'यहाँ रुकिए']
+            },
+            bn: {
+              w: 'এখানে থামুন', r: 'ekhane thamun', resp: {hi: 'एखाने थामुन'}, ex: 'দাদা, এখানে থামুন।', exr: 'dada, ekhane thamun', exresp: {hi: 'दादा, एखाने थामुन।'},
+              acc: ['এখানে থামুন', 'এখানেই থামুন', 'এখানে থামো', 'থামুন', 'এখানে দাঁড়ান', 'এখানে রাখুন']
+            },
+            ask: {en: 'You have reached your stop. Ask the driver to stop here.', hi: 'मंज़िल आ गई। ड्राइवर से यहाँ रोकने को कहिए।', bn: 'জায়গায় পৌঁছে গেছেন। ড্রাইভারকে এখানে থামতে বলুন।'},
+            tip: {
+              bn: {en: 'In Kolkata, people call an auto or taxi driver “dada” (elder brother).', hi: 'कोलकाता में ऑटो या टैक्सी ड्राइवर को ‘दादा’ कहकर बुलाते हैं।'},
+              hi: {en: 'In Delhi and Mumbai, people call the driver “bhaiya”.', bn: 'দিল্লি আর মুম্বইয়ে ড্রাইভারকে ‘ভাইয়া’ বলে ডাকা হয়।'},
+              en: {hi: 'साथ में ‘please’ बोलने से बात विनम्र लगती है।', bn: 'সঙ্গে ‘please’ বললে কথাটা ভদ্র শোনায়।'}
+            }
+          },
+
+          {
+            id: 'howmuch', topic: 'road',
+            en: {w: 'how much?', ex: 'How much is it altogether?', resp: {hi: 'हाउ मच?', bn: 'হাউ মাচ?'}, acc: ['how much', 'how much is it', 'how much is this']},
+            hi: {
+              w: 'कितना हुआ?', r: 'kitna hua?', resp: {bn: 'কিতনা হুয়া?'}, ex: 'सब मिलाकर कितना हुआ?', exr: 'sab milaakar kitna hua?', exresp: {bn: 'সব মিলাকর কিতনা হুয়া?'},
+              acc: ['कितना हुआ', 'कितना', 'कितने हुए', 'कितना है', 'कितने का है']
+            },
+            bn: {
+              w: 'কত হলো?', r: 'koto holo?', resp: {hi: 'कोतो होलो?'}, ex: 'সব মিলিয়ে কত হলো?', exr: 'shob miliye koto holo?', exresp: {hi: 'शोब मिलिये कोतो होलो?'},
+              acc: ['কত হলো', 'কত হল', 'কত হয়েছে', 'কত', 'কত দাম', 'কত টাকা']
+            },
+            ask: {en: 'The ride is over. Ask how much it is.', hi: 'सफ़र ख़त्म हो गया। पूछिए कि कितना हुआ।', bn: 'যাত্রা শেষ। জিজ্ঞেস করুন কত হলো।'}
+          },
+
+          {
+            id: 'water', topic: 'home',
+            en: {w: 'water', ex: 'Can I have some water?', resp: {hi: 'वॉटर', bn: 'ওয়াটার'}, acc: ['water']},
+            hi: {
+              w: 'पानी', r: 'paani', resp: {bn: 'পানী'}, ex: 'थोड़ा पानी मिलेगा?', exr: 'thoda paani milega?', exresp: {bn: 'থোড়া পানী মিলেগা?'},
+              acc: ['पानी', 'पानि']
+            },
+            bn: {
+              w: 'জল', r: 'jol', resp: {hi: 'जोल'}, ex: 'একটু জল পাওয়া যাবে?', exr: 'ektu jol paowa jabe?', exresp: {hi: 'एकटु जोल पावा जाबे?'},
+              acc: ['জল', 'পানি', 'জোল']
+            },
+            ask: {en: 'You are thirsty. Which word do you need?', hi: 'आपको प्यास लगी है। कौन-सा शब्द चाहिए?', bn: 'আপনার তেষ্টা পেয়েছে। কোন শব্দটা লাগবে?'},
+            tip: {
+              bn: {en: 'Most people in Kolkata say “jol”. Some say “pani”.', hi: 'कोलकाता में ज़्यादातर लोग ‘जोल’ कहते हैं, कुछ लोग ‘पानी’ भी।'}
+            }
+          },
+
+          {
+            id: 'food', topic: 'home',
+            en: {w: 'food', ex: 'Where can I get food here?', resp: {hi: 'फ़ूड', bn: 'ফুড'}, acc: ['food', 'meal']},
+            hi: {
+              w: 'खाना', r: 'khaana', resp: {bn: 'খানা'}, ex: 'यहाँ खाना कहाँ मिलेगा?', exr: 'yahaan khaana kahaan milega?', exresp: {bn: 'ইয়াহাঁ খানা কাহাঁ মিলেগা?'},
+              acc: ['खाना', 'खाने']
+            },
+            bn: {
+              w: 'খাবার', r: 'khabar', resp: {hi: 'खाबार'}, ex: 'এখানে খাবার কোথায় পাবো?', exr: 'ekhane khabar kothay pabo?', exresp: {hi: 'एखाने खाबार कोथाय पाबो?'},
+              acc: ['খাবার', 'খাওয়া', 'খাবার-দাবার']
+            },
+            ask: {en: 'You are hungry. Which word do you use for food?', hi: 'आपको भूख लगी है। खाने के लिए कौन-सा शब्द?', bn: 'আপনার খিদে পেয়েছে। খাবারের জন্য কোন শব্দ?'}
+          },
+
+          {
+            id: 'room', topic: 'home',
+            en: {w: 'room', ex: 'I need a room.', resp: {hi: 'रूम', bn: 'রুম'}, acc: ['room', 'a room']},
+            hi: {
+              w: 'कमरा', r: 'kamra', resp: {bn: 'কমরা'}, ex: 'मुझे एक कमरा चाहिए।', exr: 'mujhe ek kamra chaahiye', exresp: {bn: 'মুঝে এক কমরা চাহিয়ে।'},
+              acc: ['कमरा', 'कमरे', 'रूम']
+            },
+            bn: {
+              w: 'ঘর', r: 'ghor', resp: {hi: 'घोर'}, ex: 'আমার একটা ঘর চাই।', exr: 'amar ekta ghor chai', exresp: {hi: 'आमार एकटा घोर चाइ।'},
+              acc: ['ঘর', 'ঘোর', 'রুম']
+            },
+            ask: {en: 'You are looking for a place to stay. What is the word for room?', hi: 'आपको रहने की जगह चाहिए। कमरे को क्या कहेंगे?', bn: 'থাকার জায়গা খুঁজছেন। ঘরকে কী বলবেন?'},
+            tip: {
+              bn: {en: '“Ghor” is a room. A whole house is “bari”.', hi: '‘घोर’ मतलब कमरा। पूरे घर को ‘बाड़ि’ कहते हैं।'}
+            }
+          },
+
+          {
+            id: 'rent', topic: 'home',
+            en: {w: 'rent', ex: 'How much is the rent?', resp: {hi: 'रेंट', bn: 'রেন্ট'}, acc: ['rent', 'the rent']},
+            hi: {
+              w: 'किराया', r: 'kiraaya', resp: {bn: 'কিরায়া'}, ex: 'किराया कितना है?', exr: 'kiraaya kitna hai?', exresp: {bn: 'কিরায়া কিতনা হ্যায়?'},
+              acc: ['किराया', 'किराए', 'किराये', 'भाड़ा', 'रेंट']
+            },
+            bn: {
+              w: 'ভাড়া', r: 'bhara', resp: {hi: 'भाड़ा'}, ex: 'ভাড়া কত?', exr: 'bhara koto?', exresp: {hi: 'भाड़ा कोतो?'},
+              acc: ['ভাড়া', 'ভারা', 'বাড়া', 'রেন্ট']
+            },
+            ask: {en: 'You like the room. Which word do you use to ask about rent?', hi: 'कमरा पसंद आया। किराए के बारे में पूछने के लिए कौन-सा शब्द?', bn: 'ঘরটা পছন্দ হয়েছে। ভাড়ার কথা জিজ্ঞেস করতে কোন শব্দ?'},
+            tip: {
+              bn: {en: '“Bhara” is also the fare for an auto or bus.', hi: '‘भाड़ा’ ऑटो या बस के किराए के लिए भी बोलते हैं।'},
+              hi: {en: 'You will also hear “bhaada”, especially for fares.', bn: 'হিন্দিতে ‘ভাড়া’ শব্দটাও চলে, বিশেষ করে গাড়ির ভাড়ার জন্য।'}
+            }
+          },
+
+          {
+            id: 'market', topic: 'home',
+            en: {w: 'market', ex: 'Where is the market?', resp: {hi: 'मार्केट', bn: 'মার্কেট'}, acc: ['market', 'the market']},
+            hi: {
+              w: 'बाज़ार', r: 'baazaar', resp: {bn: 'বাজার'}, ex: 'बाज़ार कहाँ है?', exr: 'baazaar kahaan hai?', exresp: {bn: 'বাজার কাহাঁ হ্যায়?'},
+              acc: ['बाज़ार', 'बाजार', 'मार्केट']
+            },
+            bn: {
+              w: 'বাজার', r: 'bajar', resp: {hi: 'बाजार'}, ex: 'বাজারটা কোথায়?', exr: 'bajar-ta kothay?', exresp: {hi: 'बाजारटा कोथाय?'},
+              acc: ['বাজার', 'বাজারটা', 'মার্কেট']
+            },
+            ask: {en: 'You need to buy vegetables. Where do you go?', hi: 'आपको सब्ज़ी ख़रीदनी है। कहाँ जाएँगे?', bn: 'আপনাকে সবজি কিনতে হবে। কোথায় যাবেন?'},
+            tip: {
+              bn: {en: 'Almost the same as Hindi “bazaar”. An easy one!', hi: 'हिन्दी ‘बाज़ार’ जैसा ही शब्द। आसान है!'},
+              hi: {en: 'Almost the same as Bengali “bajar”. An easy one!', bn: 'বাংলা ‘বাজার’-এর মতোই শব্দ। সহজ!'}
+            }
+          },
+
+          {
+            id: 'work', topic: 'work',
+            en: {w: 'work', ex: 'My work starts at nine.', resp: {hi: 'वर्क', bn: 'ওয়ার্ক'}, acc: ['work', 'job']},
+            hi: {
+              w: 'काम', r: 'kaam', resp: {bn: 'কাম'}, ex: 'मेरा काम नौ बजे शुरू होता है।', exr: 'mera kaam nau baje shuru hota hai', exresp: {bn: 'মেরা কাম নৌ বজে শুরু হোতা হ্যায়।'},
+              acc: ['काम']
+            },
+            bn: {
+              w: 'কাজ', r: 'kaj', resp: {hi: 'काज'}, ex: "আমার কাজ ন'টায় শুরু হয়।", exr: 'amar kaj notay shuru hoy', exresp: {hi: 'आमार काज नोटाय शुरु होय।'},
+              acc: ['কাজ', 'কাজে']
+            },
+            ask: {en: 'Someone asks why you came to this city. What is the word for work?', hi: 'कोई पूछे कि आप इस शहर में क्यों हैं। ‘काम’ के लिए कौन-सा शब्द?', bn: 'কেউ জিজ্ঞেস করলেন আপনি এই শহরে কেন। ‘কাজ’-এর জন্য কোন শব্দ?'}
+          },
+
+          {
+            id: 'tomorrow', topic: 'work',
+            en: {w: 'tomorrow', ex: 'See you tomorrow.', resp: {hi: 'टुमॉरो', bn: 'টুমরো'}, acc: ['tomorrow']},
+            hi: {
+              w: 'कल', r: 'kal', resp: {bn: 'কল'}, ex: 'कल मिलते हैं।', exr: 'kal milte hain', exresp: {bn: 'কল মিলতে হ্যাঁয়।'},
+              acc: ['कल', 'कल मिलते हैं']
+            },
+            bn: {
+              w: 'কাল', r: 'kaal', resp: {hi: 'काल'}, ex: 'কাল দেখা হবে।', exr: 'kaal dekha hobe', exresp: {hi: 'काल देखा होबे।'},
+              acc: ['কাল', 'কালকে', 'আগামীকাল']
+            },
+            ask: {en: 'Your shift is not today but the next day. Which word do you use?', hi: 'आपकी शिफ़्ट आज नहीं, अगले दिन है। कौन-सा शब्द बोलेंगे?', bn: 'আপনার শিফট আজ নয়, পরের দিন। কোন শব্দটা বলবেন?'},
+            tip: {
+              bn: {en: '“Kaal” can mean tomorrow or yesterday. The sentence tells you which.', hi: 'हिन्दी ‘कल’ की तरह, ‘काल’ का मतलब आने वाला कल भी है और बीता हुआ कल भी।'},
+              hi: {en: '“Kal” can mean tomorrow or yesterday. The sentence tells you which.', bn: 'বাংলা ‘কাল’-এর মতো, ‘কল’ মানে আগামীকালও হয়, গতকালও।'}
+            }
+          },
+
+          {
+            id: 'salary', topic: 'work',
+            en: {w: 'salary', ex: 'When will I get my salary?', resp: {hi: 'सैलरी', bn: 'স্যালারি'}, acc: ['salary', 'pay', 'wages']},
+            hi: {
+              w: 'तनख़्वाह', r: 'tankhwaah', resp: {bn: 'তনখ্বাহ'}, ex: 'तनख़्वाह कब मिलेगी?', exr: 'tankhwaah kab milegi?', exresp: {bn: 'তনখ্বাহ কব মিলেগী?'},
+              acc: ['तनख़्वाह', 'तनख्वाह', 'तनखा', 'तनख़ा', 'सैलरी', 'वेतन', 'पगार']
+            },
+            bn: {
+              w: 'মাইনে', r: 'maine', resp: {hi: 'माइने'}, ex: 'মাইনে কবে পাবো?', exr: 'maine kobe pabo?', exresp: {hi: 'माइने कोबे पाबो?'},
+              acc: ['মাইনে', 'মাইনা', 'বেতন', 'স্যালারি', 'সেলারি']
+            },
+            ask: {en: 'It is the end of the month. Which word do you use to ask about your pay?', hi: 'महीना ख़त्म होने वाला है। अपने पैसों के बारे में पूछने के लिए कौन-सा शब्द?', bn: 'মাস শেষ হতে চলল। আপনার টাকার কথা জিজ্ঞেস করতে কোন শব্দ?'},
+            tip: {
+              bn: {en: '“Beton” is the formal word. In daily talk, people say “maine”.', hi: 'औपचारिक शब्द ‘बेतोन’ है, पर बोलचाल में ‘माइने’ कहते हैं।'},
+              hi: {en: 'Many people simply say “salary”.', bn: 'অনেকে শুধু ‘স্যালারি’ বলেন।'}
+            }
+          },
+
+          {
+            id: 'dontget', topic: 'work',
+            en: {
+              w: "I didn't understand", ex: "Sorry, I didn't understand.", resp: {hi: 'आई डिडन्ट अंडरस्टैंड', bn: 'আই ডিডন্ট আন্ডারস্ট্যান্ড'},
+              acc: ["i didn't understand", 'i did not understand', "i don't understand", 'i do not understand', "didn't understand"]
+            },
+            hi: {
+              w: 'मुझे समझ नहीं आया', r: 'mujhe samajh nahin aaya', resp: {bn: 'মুঝে সমঝ নহীঁ আয়া'}, ex: 'माफ़ कीजिए, मुझे समझ नहीं आया।', exr: 'maaf kijiye, mujhe samajh nahin aaya', exresp: {bn: 'মাফ কীজিয়ে, মুঝে সমঝ নহীঁ আয়া।'},
+              acc: ['मुझे समझ नहीं आया', 'समझ नहीं आया', 'मुझे समझ नहीं आई', 'समझ नहीं आई', 'मुझे समझ नहीं आ रहा', 'समझ में नहीं आया']
+            },
+            bn: {
+              w: 'আমি বুঝতে পারিনি', r: 'ami bujhte parini', resp: {hi: 'आमि बुझते पारिनि'}, ex: 'মাফ করবেন, আমি বুঝতে পারিনি।', exr: 'maaf korben, ami bujhte parini', exresp: {hi: 'माफ़ कोरबेन, आमि बुझते पारिनि।'},
+              acc: ['আমি বুঝতে পারিনি', 'বুঝতে পারিনি', 'আমি বুঝিনি', 'বুঝিনি', 'বুঝতে পারছি না', 'আমি বুঝতে পারছি না']
+            },
+            ask: {en: 'Your supervisor said something you did not follow. What do you say?', hi: 'सुपरवाइज़र की बात समझ नहीं आई। आप क्या कहेंगे?', bn: 'সুপারভাইজারের কথা বুঝতে পারেননি। আপনি কী বলবেন?'}
+          },
+
+          {
+            id: 'slowly', topic: 'work',
+            en: {
+              w: 'please speak slowly', ex: 'Please speak slowly. This language is new to me.', resp: {hi: 'प्लीज़ स्पीक स्लोली', bn: 'প্লিজ স্পিক স্লোলি'},
+              acc: ['please speak slowly', 'speak slowly', 'slowly please', 'please speak a little slowly', 'please talk slowly', 'talk slowly']
+            },
+            hi: {
+              w: 'थोड़ा धीरे बोलिए', r: 'thoda dheere boliye', resp: {bn: 'থোড়া ধীরে বোলিয়ে'}, ex: 'थोड़ा धीरे बोलिए, यह भाषा मेरे लिए नई है।', exr: 'thoda dheere boliye, yeh bhaasha mere liye nayi hai', exresp: {bn: 'থোড়া ধীরে বোলিয়ে, ইয়ে ভাষা মেরে লিয়ে নয়ী হ্যায়।'},
+              acc: ['थोड़ा धीरे बोलिए', 'धीरे बोलिए', 'धीरे-धीरे बोलिए', 'धीरे बोलो', 'थोड़ा धीरे बोलो', 'धीरे']
+            },
+            bn: {
+              w: 'একটু আস্তে বলুন', r: 'ektu aste bolun', resp: {hi: 'एकटु आस्ते बोलुन'}, ex: 'একটু আস্তে বলুন, এই ভাষাটা আমার কাছে নতুন।', exr: 'ektu aste bolun, ei bhasha-ta amar kachhe notun', exresp: {hi: 'एकटु आस्ते बोलुन, एइ भाषाटा आमार काछे नोतुन।'},
+              acc: ['একটু আস্তে বলুন', 'আস্তে বলুন', 'আস্তে আস্তে বলুন', 'আস্তে বলো', 'একটু আস্তে বলো', 'আস্তে']
+            },
+            ask: {en: 'People are talking too fast. Ask them to slow down.', hi: 'लोग बहुत तेज़ बोल रहे हैं। उनसे धीरे बोलने को कहिए।', bn: 'লোকে খুব তাড়াতাড়ি কথা বলছে। ওঁদের আস্তে বলতে বলুন।'},
+            tipAll: {en: 'Use this any time. People happily slow down for a newcomer.', hi: 'जब भी कोई तेज़ बोले, यह कहिए। नए लोगों के लिए लोग ख़ुशी से धीरे बोलते हैं।', bn: 'কেউ তাড়াতাড়ি বললে এটা বলুন। নতুন মানুষের জন্য লোকে খুশি মনে আস্তে বলে।'}
+          }
+        ],
+        ui: {
+          en: {
+            tagline: 'New city? Learn its words by speaking.',
+            myLang: 'My language', learn: 'I want to learn',
+            hint: 'Moving to Kolkata? Learn Bengali. Moving to Delhi or Mumbai? Learn Hindi.',
+            pill: '{x}/{n} words', tabCount: '{x}/{n} learned',
+            wordOf: 'Word {n} of {t}', prev: 'Previous word', next: 'Next word',
+            listen: 'Listen', slow: 'Slowly', sayIt: 'Say it {loc}', route: 'Words in this topic',
+            st_new: 'not practised yet', st_got: 'learned', st_prac: 'practise again',
+            exLabel: 'Use it in a sentence', tipLabel: 'Local tip', hidden: 'Hidden during the check.',
+            start: 'Start speaking lesson', again: 'Start again',
+            dockHint: 'About 3 minutes. Repeat each word after Bol Saathi. Allow the microphone when asked.',
+            speaking: 'Bol Saathi is speaking', listening: 'Listening. Say it now.', tapping: 'Say it out loud, then tap a button.',
+            heard: 'You said: {t}', repeat: 'Repeat slowly', skip: 'Skip word', stop: 'Stop',
+            said: 'I said it', notyet: 'Not yet',
+            stopped: 'Lesson stopped. Start again whenever you like.',
+            quizTitle: 'Quick quiz', quizIntro: 'Five questions. Tap the right word.', quizStart: 'Start quiz',
+            qCount: 'Question {i} of {n}', qText: 'Which one means “{m}”?',
+            right: 'Correct!', wrong: 'Not quite. The answer is {a}.', nextQ: 'Next question',
+            quizDone: 'You got {x} of {n}.', quizAgain: 'Play again',
+            noSR: 'Speaking practice needs Chrome or Edge and a microphone. You can still learn with the cards and the quiz, and answer by tapping.',
+            micDenied: 'The microphone is blocked, so you can answer by tapping. To speak instead, allow the microphone from the address bar and start again.',
+            netErr: 'Speech recognition needs an internet connection, so you can answer by tapping for now.',
+            noVoiceTarget: 'This browser has no {lang} voice, so {lang} words are read by a {fb} voice. For a real {lang} voice, try Microsoft Edge or an Android phone.',
+            noVoiceLearner: 'This browser has no {lang} voice, so Bol Saathi’s {lang} lines appear as text only. For the full voice, try Microsoft Edge or an Android phone.',
+            noVoices: 'This browser can’t speak aloud. Try Chrome or Edge for the voice lesson.',
+            foot: 'Made with Claude. The voice comes from your browser, so it works best in Chrome or Edge.'
+          },
+          hi: {
+            tagline: 'नया शहर? वहाँ के शब्द बोलकर सीखिए।',
+            myLang: 'मेरी भाषा', learn: 'मुझे सीखनी है',
+            hint: 'कोलकाता जा रहे हैं? बांग्ला सीखिए। ऑफ़िस के काम के लिए अंग्रेज़ी भी चुन सकते हैं।',
+            pill: '{x}/{n} शब्द', tabCount: '{x}/{n} सीखे',
+            wordOf: 'शब्द {n} / {t}', prev: 'पिछला शब्द', next: 'अगला शब्द',
+            listen: 'सुनिए', slow: 'धीरे से', sayIt: '{loc} बोलिए', route: 'इस विषय के शब्द',
+            st_new: 'अभी अभ्यास नहीं हुआ', st_got: 'सीख लिया', st_prac: 'फिर से अभ्यास',
+            exLabel: 'वाक्य में ऐसे बोलिए', tipLabel: 'लोकल टिप', hidden: 'टेस्ट के दौरान छुपा है।',
+            start: 'बोलकर सीखना शुरू करें', again: 'फिर से शुरू करें',
+            dockHint: 'करीब 3 मिनट। बोल साथी के बाद हर शब्द दोहराइए। माइक की अनुमति माँगी जाए तो ‘Allow’ दबाइए।',
+            speaking: 'बोल साथी बोल रहा है', listening: 'सुन रहा हूँ। अब बोलिए।', tapping: 'ज़ोर से बोलिए, फिर बटन दबाइए।',
+            heard: 'आपने कहा: {t}', repeat: 'धीरे से दोहराइए', skip: 'अगला शब्द', stop: 'रोकें',
+            said: 'मैंने बोल दिया', notyet: 'अभी नहीं',
+            stopped: 'पाठ रोक दिया गया। जब चाहें फिर से शुरू करें।',
+            quizTitle: 'छोटा क्विज़', quizIntro: 'पाँच सवाल। सही शब्द पर टैप कीजिए।', quizStart: 'क्विज़ शुरू करें',
+            qCount: 'सवाल {i} / {n}', qText: '“{m}” के लिए सही शब्द कौन-सा है?',
+            right: 'सही!', wrong: 'सही जवाब है: {a}', nextQ: 'अगला सवाल',
+            quizDone: '{n} में से {x} सही।', quizAgain: 'फिर से खेलें',
+            noSR: 'बोलकर अभ्यास के लिए Chrome या Edge और माइक चाहिए। कार्ड और क्विज़ से सीख सकते हैं, और टैप करके जवाब दे सकते हैं।',
+            micDenied: 'माइक बंद है, इसलिए टैप करके जवाब दीजिए। बोलकर जवाब देने के लिए एड्रेस बार से माइक की अनुमति दीजिए और फिर से शुरू कीजिए।',
+            netErr: 'आवाज़ पहचानने के लिए इंटरनेट चाहिए, इसलिए अभी टैप करके जवाब दीजिए।',
+            noVoiceTarget: 'इस ब्राउज़र में {lang} आवाज़ नहीं है, इसलिए {lang} शब्द {fb} आवाज़ में पढ़े जाएँगे। असली {lang} आवाज़ के लिए Microsoft Edge या Android फ़ोन आज़माइए।',
+            noVoiceLearner: 'इस ब्राउज़र में {lang} आवाज़ नहीं है, इसलिए बोल साथी की {lang} बातें सिर्फ़ लिखी हुई दिखेंगी। पूरी आवाज़ के लिए Microsoft Edge या Android फ़ोन आज़माइए।',
+            noVoices: 'यह ब्राउज़र बोल नहीं सकता। आवाज़ वाले पाठ के लिए Chrome या Edge आज़माइए।',
+            foot: 'Claude से बनाया गया। आवाज़ आपके ब्राउज़र से आती है, इसलिए Chrome या Edge में सबसे अच्छा चलता है।'
+          },
+          bn: {
+            tagline: 'নতুন শহর? সেখানকার শব্দ বলে বলে শিখুন।',
+            myLang: 'আমার ভাষা', learn: 'আমি শিখতে চাই',
+            hint: 'দিল্লি বা মুম্বই যাচ্ছেন? হিন্দি শিখুন। অফিসের কাজের জন্য ইংরেজিও বেছে নিতে পারেন।',
+            pill: '{x}/{n} শব্দ', tabCount: '{x}/{n} শেখা',
+            wordOf: 'শব্দ {n} / {t}', prev: 'আগের শব্দ', next: 'পরের শব্দ',
+            listen: 'শুনুন', slow: 'আস্তে', sayIt: '{loc} বলুন', route: 'এই বিষয়ের শব্দ',
+            st_new: 'এখনও অনুশীলন হয়নি', st_got: 'শেখা হয়েছে', st_prac: 'আবার অনুশীলন',
+            exLabel: 'বাক্যে এভাবে বলুন', tipLabel: 'লোকাল টিপ', hidden: 'পরীক্ষার সময় লুকানো আছে।',
+            start: 'বলে বলে শেখা শুরু করুন', again: 'আবার শুরু করুন',
+            dockHint: 'প্রায় ৩ মিনিট। বোল সাথীর পরে প্রতিটা শব্দ বলুন। মাইকের অনুমতি চাইলে ‘Allow’ টিপুন।',
+            speaking: 'বোল সাথী বলছে', listening: 'শুনছি। এবার বলুন।', tapping: 'জোরে বলুন, তারপর বোতাম টিপুন।',
+            heard: 'আপনি বললেন: {t}', repeat: 'আস্তে আবার বলুন', skip: 'পরের শব্দ', stop: 'থামান',
+            said: 'আমি বলেছি', notyet: 'এখনও না',
+            stopped: 'পাঠ থামানো হয়েছে। যখন খুশি আবার শুরু করুন।',
+            quizTitle: 'ছোট্ট কুইজ', quizIntro: 'পাঁচটা প্রশ্ন। ঠিক শব্দে ট্যাপ করুন।', quizStart: 'কুইজ শুরু করুন',
+            qCount: 'প্রশ্ন {i} / {n}', qText: '“{m}”-এর জন্য ঠিক শব্দ কোনটা?',
+            right: 'ঠিক!', wrong: 'ঠিক উত্তর হলো: {a}', nextQ: 'পরের প্রশ্ন',
+            quizDone: '{n}টার মধ্যে {x}টা ঠিক।', quizAgain: 'আবার খেলুন',
+            noSR: 'বলে অনুশীলনের জন্য Chrome বা Edge আর মাইক লাগবে। কার্ড আর কুইজ দিয়ে শিখতে পারেন, আর ট্যাপ করে উত্তর দিতে পারেন।',
+            micDenied: 'মাইক বন্ধ আছে, তাই ট্যাপ করে উত্তর দিন। বলে উত্তর দিতে চাইলে অ্যাড্রেস বার থেকে মাইকের অনুমতি দিয়ে আবার শুরু করুন।',
+            netErr: 'কথা চিনতে ইন্টারনেট লাগে, তাই এখন ট্যাপ করে উত্তর দিন।',
+            noVoiceTarget: 'এই ব্রাউজারে {lang} কণ্ঠ নেই, তাই {lang} শব্দগুলো {fb} কণ্ঠে পড়া হবে। আসল {lang} কণ্ঠের জন্য Microsoft Edge বা Android ফোনে চেষ্টা করুন।',
+            noVoiceLearner: 'এই ব্রাউজারে {lang} কণ্ঠ নেই, তাই বোল সাথীর {lang} কথাগুলো শুধু লেখা হিসেবে দেখাবে। পুরো কণ্ঠের জন্য Microsoft Edge বা Android ফোনে চেষ্টা করুন।',
+            noVoices: 'এই ব্রাউজার জোরে পড়তে পারে না। কণ্ঠের পাঠের জন্য Chrome বা Edge চেষ্টা করুন।',
+            foot: 'Claude দিয়ে তৈরি। কণ্ঠ আসে আপনার ব্রাউজার থেকে, তাই Chrome বা Edge-এ সবচেয়ে ভালো চলে।'
+          }
+        },
+        lines: {
+          en: {
+            greet: "Hi! I'm Bol Saathi. Today we'll learn {n} {lang} words for {topic}.",
+            wordN: 'Word {n}.', means: 'It means: {m}.', forEx: 'In a sentence:', exMeans: 'That means: {m}',
+            yourTurn: 'Now you say it.', praise: ['Well done!', 'Perfect!', "That's right!"],
+            almost: 'Almost! Listen once more.', tryAgain: 'Now try again.',
+            movingOn: "No problem. We'll practise it again later.", didntHear: "I didn't catch that. Please say it again.",
+            recallIntro: 'Quick check! Answer {loc}.', answerIs: 'The answer is:',
+            recapAll: 'Brilliant! You learned all {n} words. See you tomorrow!',
+            recapSome: 'Nice work! You learned {x} of {n} words. Tomorrow, practise these:'
+          },
+          hi: {
+            greet: 'नमस्ते! मैं बोल साथी हूँ। आज हम {topic} {n} {lang} शब्द सीखेंगे।',
+            wordN: 'शब्द नंबर {n}।', means: 'इसका मतलब है: {m}।', forEx: 'वाक्य में:', exMeans: 'मतलब: {m}',
+            yourTurn: 'अब आप बोलिए।', praise: ['बहुत बढ़िया!', 'शाबाश, बिल्कुल सही!', 'एकदम सही!'],
+            almost: 'लगभग सही! एक बार और सुनिए।', tryAgain: 'अब फिर से बोलिए।',
+            movingOn: 'कोई बात नहीं, इसे बाद में फिर से करेंगे।', didntHear: 'मुझे सुनाई नहीं दिया। फिर से बोलिए।',
+            recallIntro: 'चलिए, छोटा सा टेस्ट! जवाब {loc} दीजिए।', answerIs: 'सही जवाब है:',
+            recapAll: 'शाबाश! आपने सभी {n} शब्द सीख लिए। कल फिर मिलते हैं!',
+            recapSome: 'बढ़िया! आपने {n} में से {x} शब्द सीख लिए। कल इन्हें फिर से दोहराइए:'
+          },
+          bn: {
+            greet: 'নমস্কার! আমি বোল সাথী। আজ আমরা {topic} {n}টা {lang} শব্দ শিখব।',
+            wordN: '{n} নম্বর শব্দ।', means: 'এর মানে: {m}।', forEx: 'বাক্যে:', exMeans: 'মানে: {m}',
+            yourTurn: 'এবার আপনি বলুন।', praise: ['খুব ভালো!', 'দারুণ, একদম ঠিক!', 'একদম ঠিক!'],
+            almost: 'প্রায় হয়ে গেছে! আর একবার শুনুন।', tryAgain: 'এবার আবার বলুন।',
+            movingOn: 'কোনো ব্যাপার না, এটা পরে আবার করব।', didntHear: 'শুনতে পাইনি। আবার বলুন।',
+            recallIntro: 'চলুন, একটা ছোট্ট পরীক্ষা! {loc} উত্তর দিন।', answerIs: 'ঠিক উত্তর হলো:',
+            recapAll: 'দারুণ! আপনি {n}টা শব্দই শিখে ফেলেছেন। কাল আবার দেখা হবে!',
+            recapSome: 'ভালো হয়েছে! {n}টার মধ্যে {x}টা শব্দ শিখেছেন। কাল এগুলো আবার অনুশীলন করুন:'
+          }
+        }
+      };
+      /*DATA_END*/
+
+      const LANGS = DATA.langs;
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      const HAS_TTS = ('speechSynthesis' in window) && typeof window.SpeechSynthesisUtterance === 'function';
+      const STORE = 'bolsaathi.v1';
+      const RATE_L = 0.98, RATE_T = 0.9, RATE_SLOW = 0.62;
+      const ABORT = new Error('lesson-stopped');
+      const $ = (id) => document.getElementById(id);
+
+      const S = {
+        from: 'en', to: 'bn', topic: 'road', idx: 0, results: {}, running: false, phase: 'idle',
+        mode: 'voice', recall: null, done: false, notices: new Set(), caption: null, heard: ''
+      };
+      let RUN = null;
+      let Q = null;
+      let VOICES = [];
+      let voicesChecked = false;
+
+      /* ---------- saved progress ---------- */
+      function load() {
+        try {
+          const j = JSON.parse(localStorage.getItem(STORE) || 'null');
+          if (j && typeof j === 'object') {
+            if (LANGS.includes(j.from)) S.from = j.from;
+            if (LANGS.includes(j.to)) S.to = j.to;
+            if (DATA.topics.some((x) => x.id === j.topic)) S.topic = j.topic;
+            if (j.results && typeof j.results === 'object') S.results = j.results;
+          }
+        } catch (e) { /* storage unavailable */}
+        try {
+          const q = new URLSearchParams(location.search);
+          const f = q.get('from'), to = q.get('to'), tp = q.get('topic');
+          if (LANGS.includes(f)) S.from = f;
+          if (LANGS.includes(to)) S.to = to;
+          if (DATA.topics.some((x) => x.id === tp)) S.topic = tp;
+        } catch (e) { /* ignore */}
+        if (S.from === S.to) S.to = S.from === 'bn' ? 'hi' : 'bn';
+      }
+      function save() {
+        try {localStorage.setItem(STORE, JSON.stringify({from: S.from, to: S.to, topic: S.topic, results: S.results}));}
+        catch (e) { /* storage unavailable */}
+      }
+
+      /* ---------- helpers ---------- */
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const pairKey = () => S.from + '>' + S.to;
+      function results() {return S.results[pairKey()] || (S.results[pairKey()] = {});}
+      function topic() {return DATA.topics.find((x) => x.id === S.topic);}
+      function words() {return DATA.words.filter((w) => w.topic === S.topic);}
+      function cur() {const ws = words(); return ws[S.idx] || ws[0];}
+      function fill(s, v) {return String(s).replace(/\{(\w+)\}/g, (_, k) => (v && v[k] !== undefined ? v[k] : ''));}
+      function t(k, v) {const s = DATA.ui[S.from][k] !== undefined ? DATA.ui[S.from][k] : DATA.ui.en[k]; return fill(s, v);}
+      function ln(k, v) {const s = DATA.lines[S.from][k]; return Array.isArray(s) ? s[Math.floor(Math.random() * s.length)] : fill(s, v);}
+      function num(n) {const s = String(n); return S.from === 'bn' ? s.replace(/[0-9]/g, (d) => '০১২৩৪৫৬৭৮৯'[d]) : s;}
+      function lname(code) {return DATA.names[S.from][code];}
+      function strip(s) {return String(s).replace(/[\s।.?!]+$/u, '');}
+      function graphemes(s) {
+        try {return Array.from(new Intl.Segmenter(undefined, {granularity: 'grapheme'}).segment(s)).length;}
+        catch (e) {return Array.from(s).length;}
+      }
+      function shuffle(a) {for (let i = a.length - 1; i > 0; i--) {const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]];} return a;}
+      function reduceMotion() {try {return matchMedia('(prefers-reduced-motion: reduce)').matches;} catch (e) {return false;} }
+      function el(tag, attrs, ...kids) {
+        const e = document.createElement(tag);
+        if (attrs) for (const [k, v] of Object.entries(attrs)) {
+          if (v === null || v === undefined || v === false) continue;
+          if (k === 'class') e.className = v;
+          else if (k === 'text') e.textContent = v;
+          else e.setAttribute(k, v === true ? '' : v);
+        }
+        for (const k of kids) {if (k === null || k === undefined || k === false) continue; e.append(k.nodeType ? k : document.createTextNode(k));}
+        return e;
+      }
+      function mk(cls, icon, label, fn) {
+        const b = el('button', {class: cls, type: 'button'});
+        b.innerHTML = icon || '';
+        b.append(el('span', {text: label}));
+        b.addEventListener('click', fn);
+        return b;
+      }
+      function setBtn(b, label, icon) {b.innerHTML = icon || ''; b.append(el('span', {text: label}));}
+
+      /* pronunciation is written in the learner's own script (Roman for English speakers) */
+      function pron(w) {
+        const T = w[S.to], L = S.from;
+        if (S.to === 'en') return L === 'en' ? null : (T.resp && T.resp[L]) || null;
+        if (L === 'en') return T.r;
+        return (T.resp && T.resp[L]) || T.r;
+      }
+      function exPron(w) {
+        const T = w[S.to], L = S.from;
+        if (S.to === 'en') return null;
+        if (L === 'en') return T.exr;
+        return (T.exresp && T.exresp[L]) || T.exr;
+      }
+      function tipFor(w) {return (w.tip && w.tip[S.to] && w.tip[S.to][S.from]) || (w.tipAll && w.tipAll[S.from]) || null;}
+
+      const ICON = {
+        speaker: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+        mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>',
+        stop: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>',
+        skip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l8 7-8 7"/><path d="M16 5v14"/></svg>',
+        replay: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4.5h4.5"/></svg>',
+        check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+        left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+        right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>'
+      };
+
+      /* ---------- voices ---------- */
+      const PREF = {hi: ['hi-in', 'hi'], bn: ['bn-in', 'bn-bd', 'bn'], en: ['en-in', 'en-gb', 'en-us', 'en']};
+      function loadVoices() {
+        if (!HAS_TTS) return;
+        try {VOICES = speechSynthesis.getVoices() || [];} catch (e) {VOICES = [];}
+        renderNotices();
+      }
+      function voiceFor(lang) {
+        if (!HAS_TTS || !VOICES.length) return null;
+        const prefs = PREF[lang];
+        let best = null, bestScore = -1;
+        for (const v of VOICES) {
+          const l = String(v.lang || '').replace('_', '-').toLowerCase();
+          const i = prefs.findIndex((p) => l === p || l.startsWith(p + '-') || (p.length === 2 && l.slice(0, 2) === p));
+          if (i < 0) continue;
+          let s = (prefs.length - i) * 10;
+          if (/natural|neural|online/i.test(v.name)) s += 40;
+          if (/google/i.test(v.name)) s += 25;
+          if (s > bestScore) {best = v; bestScore = s;}
+        }
+        return best;
+      }
+      /* what to say for a word in the language being learned, with a fallback voice if needed */
+      function targetUtter(w, kind) {
+        const T = w[S.to], isW = kind === 'w';
+        const text = isW ? T.w : T.ex;
+        if (voiceFor(S.to)) return {text, lang: S.to};
+        const rs = isW ? T.resp : T.exresp;
+        for (const alt of ['hi', 'bn']) {
+          if (alt !== S.to && rs && rs[alt] && voiceFor(alt)) return {text: rs[alt], lang: alt};
+        }
+        if (voiceFor('en')) return {text: (isW ? T.r : T.exr) || text, lang: 'en'};
+        return null;
+      }
+      function fallbackLang() {
+        for (const alt of ['hi', 'bn']) if (alt !== S.to && voiceFor(alt)) return alt;
+        return voiceFor('en') ? 'en' : null;
+      }
+      let CURRENT_U = null;
+      function speak(text, lang, rate) {
+        return new Promise((resolve) => {
+          const v = voiceFor(lang);
+          if (!HAS_TTS || !v) {resolve(false); return;}
+          let done = false, timer = null;
+          const fin = () => {if (done) return; done = true; clearTimeout(timer); resolve(true);};
+          try {
+            const u = new SpeechSynthesisUtterance(text);
+            try {u.voice = v;} catch (e) { /* some browsers reject foreign voice objects */}
+            u.lang = v.lang || DATA.bcp[lang];
+            u.rate = rate; u.pitch = 1;
+            u.onend = fin; u.onerror = fin;
+            CURRENT_U = u;
+            timer = setTimeout(fin, 2500 + (text.length * 140) / rate);
+            speechSynthesis.speak(u);
+          } catch (e) {fin();}
+        });
+      }
+      const readPause = (text) => sleep(Math.min(4200, 700 + String(text).length * 45));
+      function unlockAudio() {
+        if (!HAS_TTS) return;
+        try {speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u);} catch (e) { /* ignore */}
+      }
+
+      /* ---------- matching what the learner said ---------- */
+      function norm(s) {
+        return String(s).normalize('NFC').toLowerCase()
+          .replace(/[ँঁ़়‌‍]/g, '')
+          .replace(/[।॥.,!?'"“”‘’\-–—:;()]/g, ' ')
+          .replace(/\s+/g, ' ').trim();
+      }
+      const squash = (s) => norm(s).replace(/\s/g, '');
+      function lev(a, b) {
+        const m = a.length, n = b.length;
+        if (!m) return n; if (!n) return m;
+        let prev = new Array(n + 1), curr = new Array(n + 1);
+        for (let j = 0; j <= n; j++) prev[j] = j;
+        for (let i = 1; i <= m; i++) {
+          curr[0] = i;
+          for (let j = 1; j <= n; j++) curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+          [prev, curr] = [curr, prev];
+        }
+        return prev[n];
+      }
+      function sim(a, b) {return 1 - lev(a, b) / Math.max(a.length, b.length, 1);}
+      function isMatch(transcripts, w) {
+        const T = w[S.to];
+        const accepted = [T.w].concat(T.acc || [], T.r ? [T.r] : []);
+        for (const raw of transcripts) {
+          const a = squash(raw);
+          if (!a) continue;
+          for (const v of accepted) {
+            const b = squash(v);
+            if (!b) continue;
+            if (a === b || a.includes(b)) return true;
+            /* fuzzy matching only for longer phrases: short words like "baan dike" and "daan dike" differ by one syllable */
+            if (b.length >= 8) {
+              if (sim(a, b) >= 0.8) return true;
+              if (a.length > b.length) {
+                for (let i = 0; i + b.length <= a.length; i++) if (sim(a.slice(i, i + b.length), b) >= 0.85) return true;
+              }
+            }
+          }
+        }
+        return false;
+      }
+
+      /* ---------- rendering ---------- */
+      function renderStatic() {
+        document.documentElement.lang = S.from;
+        $('tagline').textContent = t('tagline');
+        $('k-from').textContent = t('myLang');
+        $('k-to').textContent = t('learn');
+        $('hint').textContent = t('hint');
+        $('routeNav').setAttribute('aria-label', t('route'));
+        $('foot').textContent = t('foot');
+        $('prev').setAttribute('aria-label', t('prev'));
+        $('next').setAttribute('aria-label', t('next'));
+        setBtn($('hear'), t('listen'), ICON.speaker);
+        setBtn($('hear-slow'), t('slow'), ICON.speaker);
+        document.body.classList.toggle('running', S.running);
+      }
+      function renderPick() {
+        for (const key of ['from', 'to']) {
+          const sel = $(key);
+          if (!sel.options.length) for (const code of LANGS) sel.append(el('option', {value: code, lang: code, text: DATA.native[code]}));
+          sel.value = S[key];
+          sel.setAttribute('lang', S[key]);
+          sel.disabled = S.running;
+        }
+      }
+      function pickLang(key, code) {
+        if (S.running || S[key] === code) return;
+        if (key === 'from') {if (code === S.to) S.to = S.from; S.from = code;}
+        else {if (code === S.from) S.from = S.to; S.to = code;}
+        if (S.from === S.to) S.to = S.from === 'bn' ? 'hi' : 'bn';
+        Q = null; S.caption = null; S.heard = ''; S.done = false;
+        save();
+        renderAll(true);
+      }
+      function renderTabs() {
+        const box = $('tabs');
+        box.innerHTML = '';
+        const r = results();
+        for (const tp of DATA.topics) {
+          const ws = DATA.words.filter((w) => w.topic === tp.id);
+          const got = ws.filter((w) => r[w.id] === 'got').length;
+          const b = el('button', {class: 'tab', type: 'button', role: 'tab', 'aria-selected': String(S.topic === tp.id)},
+            el('span', {text: tp.name[S.from]}), el('small', {text: t('tabCount', {x: num(got), n: num(ws.length)})}));
+          b.disabled = S.running;
+          b.addEventListener('click', () => {
+            if (S.running || S.topic === tp.id) return;
+            S.topic = tp.id; S.idx = 0; Q = null; S.done = false; S.caption = null; S.heard = '';
+            save(); renderAll(true);
+          });
+          box.append(b);
+        }
+      }
+      function renderPill() {
+        const r = results();
+        const x = DATA.words.filter((w) => r[w.id] === 'got').length;
+        $('pill').textContent = t('pill', {x: num(x), n: num(DATA.words.length)});
+      }
+      function renderNotices() {
+        const box = $('notices');
+        if (!box) return;
+        box.innerHTML = '';
+        const msgs = [];
+        for (const k of S.notices) msgs.push(t(k));
+        if (HAS_TTS && VOICES.length) {
+          if (!voiceFor(S.to)) {
+            const fb = fallbackLang();
+            msgs.push(fb ? t('noVoiceTarget', {lang: lname(S.to), fb: lname(fb)}) : t('noVoiceLearner', {lang: lname(S.to)}));
+          }
+          if (!voiceFor(S.from)) msgs.push(t('noVoiceLearner', {lang: lname(S.from)}));
+        } else if (!HAS_TTS || voicesChecked) {
+          msgs.push(t('noVoices'));
+        }
+        for (const m of msgs) box.append(el('p', {class: 'notice', text: m}));
+      }
+      function renderBoard(anim) {
+        const w = cur(), b = $('board'), bw = $('bw'), bp = $('bp'), bm = $('bm');
+        let main, p, m;
+        if (S.recall) {
+          main = '?'; p = t('sayIt', {loc: DATA.loc[S.from][S.to]}); m = '';
+          bw.removeAttribute('lang');
+        } else {
+          main = w[S.to].w; p = pron(w) || ''; m = w[S.from].w;
+          bw.setAttribute('lang', S.to);
+        }
+        bw.textContent = main; bp.textContent = p; bm.textContent = m;
+        bp.setAttribute('lang', S.from); bm.setAttribute('lang', S.from);
+        bw.classList.toggle('cap', !S.recall && S.to === 'en');
+        bm.classList.toggle('cap', S.from === 'en');
+        const g = graphemes(main);
+        b.classList.toggle('len-m', g > 7 && g <= 12);
+        b.classList.toggle('len-l', g > 12);
+        const ws = words();
+        $('pos').textContent = t('wordOf', {n: num(S.idx + 1), t: num(ws.length)});
+        $('prev').disabled = S.running || S.idx === 0;
+        $('next').disabled = S.running || S.idx >= ws.length - 1;
+        $('hear').disabled = S.running || !HAS_TTS;
+        $('hear-slow').disabled = S.running || !HAS_TTS;
+        if (anim && !reduceMotion()) {b.classList.remove('arrive'); void b.offsetWidth; b.classList.add('arrive');}
+      }
+      function renderRoute() {
+        const ol = $('route');
+        ol.innerHTML = '';
+        const r = results(), ws = words();
+        $('routeNav').classList.toggle('hide', !!S.recall);
+        ws.forEach((w, i) => {
+          const st = r[w.id];
+          const cls = 'stn' + (st === 'got' ? ' got' : st === 'practice' ? ' prac' : '') + (i === S.idx ? ' cur' : '');
+          const b = el('button', {class: cls, type: 'button'});
+          if (st === 'got') b.innerHTML = ICON.check; else if (st === 'practice') b.innerHTML = ICON.replay;
+          const stText = st === 'got' ? t('st_got') : st === 'practice' ? t('st_prac') : t('st_new');
+          b.setAttribute('aria-label', (num(i + 1) + '. ' + (S.recall ? '' : w[S.to].w + ', ') + stText).replace(/\s+/g, ' '));
+          if (i === S.idx) b.setAttribute('aria-current', 'step');
+          b.disabled = S.running;
+          b.addEventListener('click', () => go(i));
+          const lbl = el('span', {class: 'lbl' + (S.to === 'en' ? ' cap' : ''), lang: S.to, text: w[S.to].w, 'aria-hidden': 'true'});
+          ol.append(el('li', null, b, lbl));
+        });
+      }
+      function go(i) {
+        if (S.running) return;
+        const ws = words();
+        if (i < 0 || i >= ws.length || i === S.idx) return;
+        S.idx = i;
+        renderBoard(true); renderRoute(); renderEx();
+      }
+      function renderEx() {
+        const box = $('ex');
+        box.innerHTML = '';
+        const w = cur();
+        if (S.recall) {
+          box.append(el('p', {class: 'lbl', text: t('exLabel')}), el('p', {class: 'mn', text: t('hidden')}));
+          return;
+        }
+        const T = w[S.to], L = w[S.from];
+        const hearEx = el('button', {class: 'ibtn', type: 'button', 'aria-label': t('listen')});
+        hearEx.innerHTML = ICON.speaker;
+        hearEx.disabled = S.running || !HAS_TTS;
+        hearEx.addEventListener('click', () => preview(w, 'ex', false));
+        const pr = exPron(w);
+        box.append(el('div', {class: 'exrow'},
+          el('div', null,
+            el('p', {class: 'lbl', text: t('exLabel')}),
+            el('p', {class: 's', lang: S.to, text: T.ex}),
+            pr ? el('p', {class: 'pr', lang: S.from, text: pr}) : null,
+            el('p', {class: 'mn', lang: S.from, text: L.ex})),
+          hearEx));
+        const tp = tipFor(w);
+        if (tp) {
+          box.append(el('div', {class: 'tip'},
+            el('span', {class: 'sign', 'aria-hidden': 'true'}),
+            el('div', null, el('b', {text: t('tipLabel')}), el('span', {lang: S.from, text: tp}))));
+        }
+      }
+      function setCaption(parts) {
+        S.caption = parts;
+        const c = $('caption');
+        c.innerHTML = '';
+        parts.forEach((p, i) => {
+          if (i) c.append(' ');
+          c.append(p.t ? el('span', {class: 'tw', lang: S.to, text: p.text}) : el('span', {lang: S.from, text: p.text}));
+        });
+      }
+      function showHeard(text, interim) {
+        S.heard = text;
+        const hd = $('heard');
+        hd.textContent = text ? t('heard', {t: text}) : '';
+        hd.classList.toggle('interim', !!interim);
+      }
+      function setPhase(ph) {S.phase = ph; renderDock();}
+      function renderDock() {
+        $('dstatus').hidden = !S.running;
+        $('sig').className = 'sig ' + (S.running ? S.phase : '');
+        $('status').textContent = !S.running ? '' : S.phase === 'speaking' ? t('speaking') : S.phase === 'listening' ? t('listening') : S.phase === 'tap' ? t('tapping') : '';
+        if (!S.running && !S.caption) {
+          const c = $('caption');
+          c.innerHTML = '';
+          c.append(el('span', {class: 'hintline', text: t('dockHint')}));
+        }
+        if (!S.running && !S.heard) showHeard('', false);
+        const act = $('tactions');
+        act.innerHTML = '';
+        const tag = (b, name) => {b.dataset.act = name; return b;};
+        if (!S.running) {
+          act.append(tag(mk('btn primary big', ICON.mic, (S.done || S.caption) ? t('again') : t('start'), startLesson), 'start'));
+          return;
+        }
+        const waiting = S.phase === 'listening' || S.phase === 'tap';
+        if (S.phase === 'tap') {
+          act.append(tag(mk('btn ok', ICON.check, t('said'), () => tapAnswer(true)), 'said'),
+            tag(mk('btn', null, t('notyet'), () => tapAnswer(false)), 'notyet'));
+        }
+        if (!S.recall) {
+          const rp = tag(mk('btn', ICON.replay, t('repeat'), () => control('repeat')), 'repeat');
+          rp.disabled = !waiting;
+          act.append(rp);
+        }
+        if (S.mode !== 'tap') {
+          const sk = tag(mk('btn', ICON.skip, t('skip'), () => control('skip')), 'skip');
+          sk.disabled = !waiting;
+          act.append(sk);
+        }
+        const sp = el('button', {class: 'ibtn stopb', type: 'button', 'aria-label': t('stop'), title: t('stop'), 'data-act': 'stop'});
+        sp.innerHTML = ICON.stop;
+        sp.addEventListener('click', stopLesson);
+        act.append(sp);
+      }
+      function renderQuiz() {
+        const box = $('quiz');
+        box.innerHTML = '';
+        box.append(el('h2', {text: t('quizTitle')}));
+        if (!Q) {
+          box.append(el('p', {class: 'sub', text: t('quizIntro')}));
+          const b = mk('btn', null, t('quizStart'), startQuiz);
+          b.disabled = S.running;
+          box.append(el('div', {class: 'actions'}, b));
+          return;
+        }
+        if (Q.i >= Q.list.length) {
+          box.append(el('p', {class: 'score', text: t('quizDone', {x: num(Q.score), n: num(Q.list.length)})}));
+          const b = mk('btn', null, t('quizAgain'), startQuiz);
+          b.disabled = S.running;
+          box.append(el('div', {class: 'actions'}, b));
+          return;
+        }
+        const w = Q.list[Q.i];
+        if (!Q.opts) Q.opts = shuffle([w].concat(shuffle(words().filter((x) => x.id !== w.id)).slice(0, 2)));
+        box.append(el('p', {class: 'qcount', text: t('qCount', {i: num(Q.i + 1), n: num(Q.list.length)})}));
+        box.append(el('p', {class: 'qtext', text: t('qText', {m: strip(w[S.from].w)})}));
+        const opts = el('div', {class: 'opts', role: 'group'});
+        for (const o of Q.opts) {
+          const p = pron(o);
+          const b = el('button', {class: 'opt', type: 'button'},
+            el('span', {class: 'ow' + (S.to === 'en' ? ' cap' : ''), lang: S.to, text: o[S.to].w}),
+            p ? el('span', {class: 'op', lang: S.from, text: p}) : null);
+          if (Q.picked) {
+            b.disabled = true;
+            if (o.id === w.id) b.classList.add('right');
+            else if (o.id === Q.picked) b.classList.add('wrong');
+          }
+          b.disabled = b.disabled || S.running;
+          b.addEventListener('click', () => answerQuiz(o));
+          opts.append(b);
+        }
+        box.append(opts);
+        if (Q.picked) {
+          const ok = Q.picked === w.id;
+          box.append(el('p', {class: 'fb ' + (ok ? 'good' : 'bad'), text: ok ? t('right') : t('wrong', {a: w[S.to].w})}));
+          const nb = mk('btn primary', null, t('nextQ'), () => {
+            Q.i++; Q.opts = null; Q.picked = null; renderQuiz();
+            const f = $('quiz').querySelector('.opt, .btn'); if (f) f.focus({preventScroll: true});
+          });
+          box.append(el('div', {class: 'actions'}, nb));
+        } else {
+          box.append(el('p', {class: 'fb'}));
+        }
+      }
+      function renderAll(anim) {
+        renderStatic(); renderPick(); renderTabs(); renderPill(); renderNotices();
+        renderBoard(anim); renderRoute(); renderEx(); renderDock(); renderQuiz();
+      }
+
+      /* ---------- listening to the board outside a lesson ---------- */
+      async function preview(w, kind, slow) {
+        if (S.running || !HAS_TTS) return;
+        try {speechSynthesis.cancel();} catch (e) { /* ignore */}
+        const u = targetUtter(w, kind);
+        if (u) await speak(u.text, u.lang, slow ? RATE_SLOW : RATE_T);
+      }
+
+      /* ---------- quiz ---------- */
+      function startQuiz() {
+        if (S.running) return;
+        Q = {list: shuffle(words().slice()), i: 0, score: 0, opts: null, picked: null};
+        renderQuiz();
+        const f = $('quiz').querySelector('.opt'); if (f) f.focus({preventScroll: true});
+      }
+      function answerQuiz(o) {
+        if (!Q || Q.picked || S.running) return;
+        const w = Q.list[Q.i];
+        Q.picked = o.id;
+        if (o.id === w.id) {
+          Q.score++;
+          if (results()[w.id] !== 'got') {results()[w.id] = 'got'; save(); renderRoute(); renderTabs(); renderPill();}
+        }
+        renderQuiz();
+        preview(w, 'w', false);
+        const nb = $('quiz').querySelector('.actions .btn'); if (nb) nb.focus({preventScroll: true});
+      }
+
+      /* ---------- the speaking lesson ---------- */
+      function check() {if (!RUN || RUN.aborted) throw ABORT;}
+      const Lp = (text) => ({text, t: false});
+      const Tp = (w, kind, slow) => ({text: kind === 'w' ? w[S.to].w : w[S.to].ex, t: true, w, kind, slow: !!slow});
+      async function say(parts, captionParts) {
+        check();
+        setPhase('speaking');
+        setCaption(captionParts || parts);
+        for (const p of parts) {
+          check();
+          let ok = false;
+          if (p.t) {
+            const u = targetUtter(p.w, p.kind);
+            if (u) ok = await speak(u.text, u.lang, p.slow ? RATE_SLOW : RATE_T);
+          } else if (voiceFor(S.from)) {
+            ok = await speak(p.text, S.from, RATE_L);
+          }
+          if (!ok) await readPause(p.text);
+          check();
+          await sleep(140);
+        }
+      }
+      function listen(lang) {
+        return new Promise((resolve) => {
+          let rec;
+          try {rec = new SR();} catch (e) {resolve({error: 'unsupported', transcripts: []}); return;}
+          const ctl = {rec, reason: null};
+          RUN.listen = ctl;
+          const finals = [];
+          let settled = false, timer = null;
+          const fin = (extra) => {
+            if (settled) return;
+            settled = true; clearTimeout(timer);
+            if (RUN && RUN.listen === ctl) RUN.listen = null;
+            resolve(Object.assign({transcripts: finals.slice(), reason: ctl.reason}, extra || {}));
+          };
+          rec.lang = DATA.bcp[lang];
+          rec.interimResults = true;
+          rec.maxAlternatives = 5;
+          rec.continuous = false;
+          rec.onresult = (e) => {
+            let interim = '';
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+              const r = e.results[i];
+              if (r.isFinal) {for (let j = 0; j < r.length; j++) if (r[j] && r[j].transcript) finals.push(r[j].transcript.trim());}
+              else if (r[0]) interim += r[0].transcript;
+            }
+            if (finals.length) showHeard(finals[0], false);
+            else if (interim) showHeard(interim.trim(), true);
+          };
+          rec.onerror = (e) => fin({error: (e && e.error) || 'error'});
+          rec.onend = () => fin();
+          timer = setTimeout(() => {try {rec.stop();} catch (e) { /* ignore */} setTimeout(() => fin(), 1500);}, 9000);
+          showHeard('', false);
+          setPhase('listening');
+          try {rec.start();} catch (e) {fin({error: 'start-failed'});}
+        });
+      }
+      function waitTap() {
+        return new Promise((resolve) => {
+          RUN.tap = (v) => {if (RUN) RUN.tap = null; resolve(v || {});};
+          setPhase('tap');
+        });
+      }
+      function control(reason) {
+        if (!RUN) return;
+        if (RUN.listen) {RUN.listen.reason = reason; try {RUN.listen.rec.abort();} catch (e) { /* ignore */} }
+        else if (RUN.tap) RUN.tap({reason});
+      }
+      function tapAnswer(ok) {if (RUN && RUN.tap) RUN.tap({tap: true, ok});}
+      function stopLesson() {
+        if (!RUN) return;
+        RUN.aborted = true;
+        try {if (HAS_TTS) speechSynthesis.cancel();} catch (e) { /* ignore */}
+        if (RUN.listen) {try {RUN.listen.rec.abort();} catch (e) { /* ignore */} }
+        if (RUN.tap) RUN.tap({reason: 'stop'});
+      }
+      function addNotice(k) {S.notices.add(k); renderNotices();}
+      async function decideMode() {
+        if (!SR) {S.mode = 'tap'; addNotice('noSR'); return;}
+        S.mode = 'voice';
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          try {
+            const st = await navigator.mediaDevices.getUserMedia({audio: true});
+            st.getTracks().forEach((tr) => tr.stop());
+          } catch (e) {
+            const n = e && e.name;
+            if (n === 'NotAllowedError' || n === 'SecurityError' || n === 'NotFoundError') {S.mode = 'tap'; addNotice('micDenied');}
+          }
+        }
+      }
+      /* one try at saying a word: returns 'got', 'miss' or 'skip' */
+      async function attempt(w, prompt) {
+        if (prompt) await say([Lp(prompt)]);
+        let quiet = 0;
+        for (; ;) {
+          check();
+          const r = S.mode === 'voice' ? await listen(S.to) : await waitTap();
+          check();
+          if (r.reason === 'stop') throw ABORT;
+          if (r.reason === 'repeat') {await say([Tp(w, 'w', true)]); continue;}
+          if (r.reason === 'skip') return 'skip';
+          if (r.tap) return r.ok ? 'got' : 'miss';
+          if (r.error && /not-allowed|service-not-allowed|audio-capture/.test(r.error)) {S.mode = 'tap'; addNotice('micDenied'); continue;}
+          if (r.error === 'network') {S.mode = 'tap'; addNotice('netErr'); continue;}
+          if (r.error === 'unsupported' || r.error === 'start-failed') {S.mode = 'tap'; addNotice('noSR'); continue;}
+          if (!r.transcripts.length) {
+            if (quiet++ < 1) {await say([Lp(ln('didntHear'))]); continue;}
+            return 'miss';
+          }
+          return isMatch(r.transcripts, w) ? 'got' : 'miss';
+        }
+      }
+      function mark(w, st) {results()[w.id] = st; save(); renderRoute(); renderTabs(); renderPill();}
+      async function startLesson() {
+        if (S.running) return;
+        unlockAudio();
+        RUN = {aborted: false, listen: null, tap: null};
+        Q = null;
+        S.running = true; S.done = false; S.recall = null; S.idx = 0; S.caption = null; S.heard = '';
+        renderAll(true);
+        try {$('stage').scrollIntoView({behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start'});} catch (e) { /* ignore */}
+        try {
+          await decideMode();
+          check();
+          const ws = words(), tp = topic();
+          await say([Lp(ln('greet', {topic: tp.frag[S.from], n: num(ws.length), lang: lname(S.to)}))]);
+          for (let i = 0; i < ws.length; i++) {
+            check();
+            const w = ws[i];
+            S.idx = i; showHeard('', false);
+            renderBoard(true); renderRoute(); renderEx();
+            const meaning = strip(w[S.from].w);
+            await say(
+              [Lp(ln('wordN', {n: num(i + 1)})), Tp(w, 'w', true), Tp(w, 'w'), Lp(ln('means', {m: meaning}))],
+              [Lp(ln('wordN', {n: num(i + 1)})), Tp(w, 'w'), Lp(ln('means', {m: meaning}))]);
+            await say([Lp(ln('forEx')), Tp(w, 'ex'), Lp(ln('exMeans', {m: w[S.from].ex}))]);
+            let out = await attempt(w, ln('yourTurn'));
+            if (out === 'miss') {
+              await say([Lp(ln('almost')), Tp(w, 'w', true), Lp(ln('tryAgain'))]);
+              out = await attempt(w, null);
+            }
+            if (out === 'got') {mark(w, 'got'); await say([Lp(ln('praise'))]);}
+            else {mark(w, 'practice'); await say([Lp(ln('movingOn'))]);}
+          }
+          /* quick check: hardest words first */
+          const r = results();
+          const qs = ws.filter((w) => r[w.id] !== 'got').concat(shuffle(ws.filter((w) => r[w.id] === 'got'))).slice(0, 2);
+          await say([Lp(ln('recallIntro', {loc: DATA.loc[S.from][S.to]}))]);
+          for (const w of qs) {
+            check();
+            S.idx = ws.indexOf(w); S.recall = w.id; showHeard('', false);
+            renderBoard(true); renderRoute(); renderEx();
+            const out = await attempt(w, w.ask[S.from]);
+            S.recall = null;
+            renderBoard(false); renderRoute(); renderEx();
+            if (out === 'got') {mark(w, 'got'); await say([Lp(ln('praise'))]);}
+            else {mark(w, 'practice'); await say([Lp(ln('answerIs')), Tp(w, 'w')]);}
+          }
+          const left = ws.filter((w) => results()[w.id] !== 'got');
+          if (!left.length) await say([Lp(ln('recapAll', {n: num(ws.length)}))]);
+          else await say([Lp(ln('recapSome', {x: num(ws.length - left.length), n: num(ws.length)}))].concat(left.slice(0, 3).map((w) => Tp(w, 'w'))));
+          S.done = true;
+        } catch (e) {
+          if (e === ABORT) setCaption([Lp(t('stopped'))]);
+          else console.error(e);
+        } finally {
+          try {if (HAS_TTS) speechSynthesis.cancel();} catch (e) { /* ignore */}
+          if (RUN && RUN.listen) {try {RUN.listen.rec.abort();} catch (e) { /* ignore */} }
+          RUN = null; S.running = false; S.recall = null; S.phase = 'idle'; S.heard = '';
+          renderAll(false);
+        }
+      }
+
+      /* ---------- start ---------- */
+      function syncDock() {document.body.style.paddingBottom = ($('dock').offsetHeight + 24) + 'px';}
+      function init() {
+        load();
+        if (!SR) S.notices.add('noSR');
+        $('prev').innerHTML = ICON.left;
+        $('next').innerHTML = ICON.right;
+        $('prev').addEventListener('click', () => go(S.idx - 1));
+        $('next').addEventListener('click', () => go(S.idx + 1));
+        $('hear').addEventListener('click', () => preview(cur(), 'w', false));
+        $('hear-slow').addEventListener('click', () => preview(cur(), 'w', true));
+        $('from').addEventListener('change', (e) => pickLang('from', e.target.value));
+        $('to').addEventListener('change', (e) => pickLang('to', e.target.value));
+        if (HAS_TTS) {
+          loadVoices();
+          try {speechSynthesis.onvoiceschanged = loadVoices;} catch (e) { /* ignore */}
+        }
+        setTimeout(() => {voicesChecked = true; loadVoices(); renderNotices();}, 2500);
+        renderAll(false);
+        syncDock();
+        if ('ResizeObserver' in window) new ResizeObserver(syncDock).observe($('dock'));
+        else window.addEventListener('resize', syncDock);
+        window.BolSaathi = {state: S, isMatch, words, startLesson, stopLesson}; /* handy for testing */
+      }
+      init();
+    })();
+  </script>
+</body>
+
+</html>
