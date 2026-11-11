@@ -167,7 +167,7 @@ footer{font-size:14px;color:var(--slate);padding-top:18px;padding-bottom:24px}
 /* the lesson dock: the platform edge */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:6px solid var(--yellow);box-shadow:0 -3px 0 #000;padding-bottom:env(safe-area-inset-bottom,0px)}
 .dock .wrap{padding-top:10px;padding-bottom:12px}
-.dstatus{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--slate);font-weight:600}
+.dstatus{display:flex;align-items:center;gap:8px;min-height:44px;font-size:15px;color:var(--slate);font-weight:600}
 .sig{width:12px;height:12px;border-radius:50%;background:var(--line);flex:none}
 .sig.speaking{background:var(--coach)}
 .sig.listening{background:var(--red);animation:pulse 1.3s infinite}
@@ -182,7 +182,7 @@ footer{font-size:14px;color:var(--slate);padding-top:18px;padding-bottom:24px}
 .dock .actions{margin-top:10px;gap:8px}
 .dock .btn{font-size:16px;padding:7px 13px}
 .dock .btn.big{width:100%;justify-content:center;font-size:19px}
-.dock .stopb{margin-left:auto;width:48px;height:48px;border-color:var(--coach);color:var(--coach)}
+.dock .stopb{margin-left:auto;border-color:var(--coach);color:var(--coach)}
 .dock .stopb svg{width:18px;height:18px}
 body.running .listen{display:none}
 
@@ -262,7 +262,7 @@ body.running .listen{display:none}
 
 <div class="dock" id="dock" role="region" aria-label="Speaking lesson">
   <div class="wrap">
-    <div class="dstatus" id="dstatus" hidden><span class="sig" id="sig"></span><span id="status"></span></div>
+    <div class="dstatus" id="dstatus" hidden><span class="sig" id="sig"></span><span id="status"></span><button class="ibtn stopb" id="stopb" type="button" data-act="stop"></button></div>
     <p class="caption" id="caption" aria-live="polite"></p>
     <p class="heard" id="heard" aria-live="polite"></p>
     <div class="actions" id="tactions"></div>
@@ -574,11 +574,13 @@ const HAS_TTS = ('speechSynthesis' in window) && typeof window.SpeechSynthesisUt
 const STORE = 'bolsaathi.v1';
 const RATE_N = 0.95, RATE_SLOW = 0.78;
 const ABORT = new Error('lesson-stopped');
+const SKIP = new Error('word-skipped');
 const $ = (id) => document.getElementById(id);
 
 const S = { from: 'en', to: 'bn', topic: 'road', idx: 0, results: {}, running: false, phase: 'idle',
             mode: 'voice', recall: null, done: false, notices: new Set(), caption: null, heard: '', signal: null };
 let RUN = null;
+let dockFocus = null; /* which dock button had keyboard focus */
 let Q = null;
 let VOICES = [];
 let voicesChecked = false;
@@ -721,7 +723,10 @@ function speakRun(run) {
   return new Promise((resolve) => {
     if (!HAS_TTS || !run.length) { resolve(false); return; }
     let done = false, timer = null;
-    const fin = (ok) => { if (done) return; done = true; clearTimeout(timer); resolve(ok); };
+    const fin = (ok) => { if (done) return; done = true; clearTimeout(timer); if (RUN) RUN.wakers.delete(cut); resolve(ok); };
+    /* Skip and Stop don't wait for the browser to report that speech was cut off (some browsers never do) */
+    const cut = () => fin(true);
+    if (RUN) RUN.wakers.add(cut);
     try {
       KEEP = [];
       let total = 1500;
@@ -749,7 +754,17 @@ function joinText(a, b, lang) {
   const x = a.trim();
   return /[.!?।:;,…]$/.test(x) ? x + ' ' + b : x + (lang === 'en' ? '. ' : '। ') + b;
 }
-const readPause = (text) => sleep(Math.min(4200, 700 + String(text).length * 45));
+/* a pause that Skip or Stop can cut short */
+function nap(ms) {
+  return new Promise((res) => {
+    let tm = null;
+    const done = () => { clearTimeout(tm); if (RUN) RUN.wakers.delete(done); res(); };
+    tm = setTimeout(done, ms);
+    if (RUN) RUN.wakers.add(done);
+  });
+}
+function wake() { if (RUN) for (const f of Array.from(RUN.wakers)) f(); }
+const readPause = (text) => nap(Math.min(4200, 700 + String(text).length * 45));
 function unlockAudio() {
   if (!HAS_TTS) return;
   try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) { /* ignore */ }
@@ -808,7 +823,9 @@ function renderStatic() {
   $('routeNav').setAttribute('aria-label', t('route'));
   $('foot').textContent = t('foot');
   $('prev').setAttribute('aria-label', t('prev'));
-  $('next').setAttribute('aria-label', t('next'));
+  renderNext();
+  $('stopb').setAttribute('aria-label', t('stop'));
+  $('stopb').title = t('stop');
   setBtn($('hear'), t('listen'), ICON.speaker);
   setBtn($('hear-slow'), t('slow'), ICON.speaker);
   document.body.classList.toggle('running', S.running);
@@ -891,7 +908,7 @@ function renderBoard(anim) {
   const ws = words();
   $('pos').textContent = t('wordOf', { n: num(S.idx + 1), t: num(ws.length) });
   $('prev').disabled = S.running || S.idx === 0;
-  $('next').disabled = S.running || S.idx >= ws.length - 1;
+  renderNext();
   $('hear').disabled = S.running || !HAS_TTS;
   $('hear-slow').disabled = S.running || !HAS_TTS;
   if (anim && !reduceMotion()) { b.classList.remove('arrive'); void b.offsetWidth; b.classList.add('arrive'); }
@@ -914,6 +931,13 @@ function renderRoute() {
     const lbl = el('span', { class: 'lbl' + (S.to === 'en' ? ' cap' : ''), lang: S.to, text: w[S.to].w, 'aria-hidden': 'true' });
     ol.append(el('li', null, b, lbl));
   });
+}
+/* the › arrow: next word when browsing, Skip word during a lesson */
+function renderNext() {
+  const nx = $('next'), label = S.running ? t('skip') : t('next');
+  nx.disabled = S.running ? !canSkip() : S.idx >= words().length - 1;
+  nx.setAttribute('aria-label', label);
+  nx.title = label;
 }
 function go(i) {
   if (S.running) return;
@@ -998,31 +1022,34 @@ function renderDock() {
   }
   if (!S.running && !S.heard) showHeard('', false);
   const act = $('tactions');
+  /* the buttons are rebuilt on every change, so keyboard focus goes back to the same one when it's usable again */
+  const ae = document.activeElement;
+  if (ae && act.contains(ae)) dockFocus = ae.dataset.act || null;
+  else if (ae && ae !== document.body) dockFocus = null;
   act.innerHTML = '';
   const tag = (b, name) => { b.dataset.act = name; return b; };
   if (!S.running) {
     act.append(tag(mk('btn primary big', ICON.mic, (S.done || S.caption) ? t('again') : t('start'), startLesson), 'start'));
-    return;
-  }
-  const waiting = S.phase === 'listening' || S.phase === 'tap';
-  if (S.phase === 'tap') {
-    act.append(tag(mk('btn ok', ICON.check, t('said'), () => tapAnswer(true)), 'said'),
-               tag(mk('btn', null, t('notyet'), () => tapAnswer(false)), 'notyet'));
-  }
-  if (!S.recall) {
-    const rp = tag(mk('btn', ICON.replay, t('repeat'), () => control('repeat')), 'repeat');
-    rp.disabled = !waiting;
-    act.append(rp);
-  }
-  if (S.mode !== 'tap') {
-    const sk = tag(mk('btn', ICON.skip, t('skip'), () => control('skip')), 'skip');
-    sk.disabled = !waiting;
+  } else {
+    const waiting = S.phase === 'listening' || S.phase === 'tap';
+    if (S.phase === 'tap') {
+      act.append(tag(mk('btn ok', ICON.check, t('said'), () => tapAnswer(true)), 'said'),
+                 tag(mk('btn', null, t('notyet'), () => tapAnswer(false)), 'notyet'));
+    }
+    if (!S.recall) {
+      const rp = tag(mk('btn', ICON.replay, t('repeat'), () => control('repeat')), 'repeat');
+      rp.disabled = !waiting;
+      act.append(rp);
+    }
+    /* Skip works the whole time a word is on the board: while it's being taught, while listening, and in tap mode */
+    const sk = tag(mk('btn', ICON.skip, t('skip'), skipWord), 'skip');
+    sk.disabled = !canSkip();
     act.append(sk);
   }
-  const sp = el('button', { class: 'ibtn stopb', type: 'button', 'aria-label': t('stop'), title: t('stop'), 'data-act': 'stop' });
-  sp.innerHTML = ICON.stop;
-  sp.addEventListener('click', stopLesson);
-  act.append(sp);
+  if (dockFocus) {
+    const b = act.querySelector('[data-act="' + dockFocus + '"]');
+    if (b && !b.disabled) b.focus({ preventScroll: true });
+  }
 }
 function renderQuiz() {
   const box = $('quiz');
@@ -1108,7 +1135,7 @@ function answerQuiz(o) {
 }
 
 /* ---------- the speaking lesson ---------- */
-function check() { if (!RUN || RUN.aborted) throw ABORT; }
+function check() { if (!RUN || RUN.aborted) throw ABORT; if (RUN.skip) throw SKIP; }
 const Lp = (text) => ({ text, t: false });
 const Tp = (w, kind, slow) => ({ text: kind === 'w' ? w[S.to].w : w[S.to].ex, t: true, w, kind, slow: !!slow });
 async function say(parts, captionParts) {
@@ -1141,7 +1168,7 @@ async function say(parts, captionParts) {
     if (!ok) for (const r of run) await readPause(r.text);
     check();
   }
-  await sleep(120);
+  await nap(120);
 }
 function listen(lang) {
   return new Promise((resolve) => {
@@ -1154,10 +1181,13 @@ function listen(lang) {
     const fin = (extra) => {
       if (settled) return;
       settled = true; clearTimeout(timer);
+      if (RUN) RUN.wakers.delete(cut);
       if (RUN && RUN.listen === ctl) RUN.listen = null;
       if (S.signal && S.signal.kind === 'listen') setSignal(null);
       resolve(Object.assign({ transcripts: finals.slice(), reason: ctl.reason }, extra || {}));
     };
+    const cut = () => fin({ error: 'aborted' });
+    RUN.wakers.add(cut);
     rec.lang = DATA.bcp[lang];
     rec.interimResults = true;
     rec.maxAlternatives = 5;
@@ -1193,12 +1223,30 @@ function control(reason) {
   else if (RUN.tap) RUN.tap({ reason });
 }
 function tapAnswer(ok) { if (RUN && RUN.tap) RUN.tap({ tap: true, ok }); }
+/* Skip is open from the moment a word is on the board until its result is decided */
+function canSkip() { return !!(RUN && RUN.inWord && !RUN.skip); }
+function skippable(on) {
+  if (!RUN) return;
+  RUN.inWord = on; RUN.skip = false;
+  renderDock(); renderNext();
+}
+function skipWord() {
+  if (!canSkip()) return;
+  RUN.skip = true;
+  renderDock(); renderNext();
+  /* cut off whatever is happening now; the lesson moves to the next word */
+  try { if (HAS_TTS) speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+  if (RUN.listen) { RUN.listen.reason = 'skip'; try { RUN.listen.rec.abort(); } catch (e) { /* ignore */ } }
+  if (RUN.tap) RUN.tap({ reason: 'skip' });
+  wake();
+}
 function stopLesson() {
   if (!RUN) return;
   RUN.aborted = true;
   try { if (HAS_TTS) speechSynthesis.cancel(); } catch (e) { /* ignore */ }
   if (RUN.listen) { try { RUN.listen.rec.abort(); } catch (e) { /* ignore */ } }
   if (RUN.tap) RUN.tap({ reason: 'stop' });
+  wake();
 }
 function addNotice(k) { S.notices.add(k); renderNotices(); }
 async function decideMode() {
@@ -1240,7 +1288,7 @@ function mark(w, st) { results()[w.id] = st; save(); renderRoute(); renderTabs()
 async function startLesson() {
   if (S.running) return;
   unlockAudio();
-  RUN = { aborted: false, listen: null, tap: null };
+  RUN = { aborted: false, listen: null, tap: null, inWord: false, skip: false, wakers: new Set() };
   Q = null;
   S.running = true; S.done = false; S.recall = null; S.idx = 0; S.caption = null; S.heard = '';
   renderAll(true);
@@ -1256,15 +1304,29 @@ async function startLesson() {
       S.idx = i; showHeard('', false); setSignal(null);
       renderBoard(true); renderRoute(); renderEx();
       const meaning = strip(w[S.from].w);
-      await say(
-        [Lp(ln('wordN', { n: num(i + 1) })), Tp(w, 'w', true), Tp(w, 'w'), Lp(ln('means', { m: meaning }))],
-        [Lp(ln('wordN', { n: num(i + 1) })), Tp(w, 'w'), Lp(ln('means', { m: meaning }))]);
-      await say([Lp(ln('forEx')), Tp(w, 'ex'), Lp(ln('exMeans', { m: w[S.from].ex }))]);
-      let out = await attempt(w, ln('yourTurn'));
-      if (out === 'miss') {
-        setSignal({ kind: 'miss', text: t('fbAlmost') });
-        await say([Lp(ln('almost')), Tp(w, 'w', true), Lp(ln('tryAgain'))]);
-        out = await attempt(w, null);
+      let out;
+      try {
+        skippable(true);
+        await say(
+          [Lp(ln('wordN', { n: num(i + 1) })), Tp(w, 'w', true), Tp(w, 'w'), Lp(ln('means', { m: meaning }))],
+          [Lp(ln('wordN', { n: num(i + 1) })), Tp(w, 'w'), Lp(ln('means', { m: meaning }))]);
+        await say([Lp(ln('forEx')), Tp(w, 'ex'), Lp(ln('exMeans', { m: w[S.from].ex }))]);
+        out = await attempt(w, ln('yourTurn'));
+        if (out === 'miss') {
+          setSignal({ kind: 'miss', text: t('fbAlmost') });
+          await say([Lp(ln('almost')), Tp(w, 'w', true), Lp(ln('tryAgain'))]);
+          out = await attempt(w, null);
+        }
+      } catch (e) {
+        if (e !== SKIP) throw e;
+        out = 'skip';
+      }
+      skippable(false);
+      if (out === 'skip') {
+        /* straight on to the next word; a word learned before stays learned */
+        if (results()[w.id] !== 'got') mark(w, 'practice');
+        await nap(250); /* gives the browser's voice a moment after being cut off */
+        continue;
       }
       if (out === 'got') {
         const pr = ln('praise');
@@ -1283,9 +1345,18 @@ async function startLesson() {
       check();
       S.idx = ws.indexOf(w); S.recall = w.id; showHeard('', false); setSignal(null);
       renderBoard(true); renderRoute(); renderEx();
-      const out = await attempt(w, w.ask[S.from]);
+      let out;
+      try {
+        skippable(true);
+        out = await attempt(w, w.ask[S.from]);
+      } catch (e) {
+        if (e !== SKIP) throw e;
+        out = 'skip';
+      }
+      skippable(false);
       S.recall = null;
       renderBoard(false); renderRoute(); renderEx();
+      if (out === 'skip') await nap(250);
       if (out === 'got') {
         const pr = ln('praise');
         mark(w, 'got'); setSignal({ kind: 'ok', text: pr });
@@ -1320,7 +1391,9 @@ function init() {
   $('prev').innerHTML = ICON.left;
   $('next').innerHTML = ICON.right;
   $('prev').addEventListener('click', () => go(S.idx - 1));
-  $('next').addEventListener('click', () => go(S.idx + 1));
+  $('next').addEventListener('click', () => (S.running ? skipWord() : go(S.idx + 1)));
+  $('stopb').innerHTML = ICON.stop;
+  $('stopb').addEventListener('click', stopLesson);
   $('hear').addEventListener('click', () => preview(cur(), 'w', false));
   $('hear-slow').addEventListener('click', () => preview(cur(), 'w', true));
   $('from').addEventListener('change', (e) => pickLang('from', e.target.value));
